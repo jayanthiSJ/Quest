@@ -15,6 +15,7 @@ render(
   <MuiThemeProvider>
     <Router>
      <div >
+    {/*<Route exact path="/" component={Landingpage} />*/}
      <Route exact path="/" component={Landingpage} />
      <Route path="/editor" component={Editor} />
      </div>
