@@ -11,8 +11,6 @@ import Question from './question.js';
 import Editor from './texteditor.js';
 import './reactlandingpage.css';
 
-
-
 const styles = {
   headline: {
     fontSize: 24,
@@ -67,15 +65,11 @@ class Questiontabs extends React.Component {
          });
     }
 
-
     handleChange(value){
       this.setState({
         slideIndex: value
       });
     }
-
-
-
 
         getTopQuestions(){
           const self=this;

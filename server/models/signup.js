@@ -6,4 +6,4 @@ module.exports = mongoose.model('user', {
     lastname:{type : String},
     password: {type : String,required: true},
     username:  {type : String,required: true,unique : true}
-});
+  });

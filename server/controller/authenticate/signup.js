@@ -1,3 +1,4 @@
+
 var LocalStrategy = require('passport-local').Strategy;
 var UserModel = require('../../models/signup');
 

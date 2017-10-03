@@ -14,8 +14,6 @@ addQuestion: function(req, res) {
                           console.log(JSON.stringify(result1));
                           res.send(JSON.stringify(result1));
                       });
-
-
               },
               addAnswer:function(req, res) {
                       console.log("ADD addAnswer");
@@ -144,6 +142,7 @@ addQuestion: function(req, res) {
                       res.send(result);
                 });
                   res.send("follow");
+
               }
 
   };

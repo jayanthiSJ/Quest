@@ -78,9 +78,8 @@ let setupMongooseConnections = function() {
   const mongoose = require('mongoose');
   let mongoURL = 'mongodb://127.0.0.1:27017/QnA';
 
+
   mongoose.connect(mongoURL,{ useMongoClient: true });
-
-
   mongoose.connection.on('connected', function () {
     console.log('mongoose is now connected to ', mongoURL);
 

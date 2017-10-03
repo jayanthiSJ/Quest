@@ -201,7 +201,6 @@ export default class Question extends React.Component {
             </div>
               </Dialog>
             </TableRowColumn>
-
           </TableRow>
         </TableBody>
       </Table>

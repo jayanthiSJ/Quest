@@ -4,7 +4,6 @@ var signup = require('./signup');
 var UserModel = require('./../../models/signup');
 
 
-
 module.exports = function(passport) {
 
     // Passport needs to be able to serialize and deserialize users to support persistent login sessions
