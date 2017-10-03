@@ -1,0 +1,6 @@
+.App {
+   height: 100%;
+  background-image: url('./../assets/images/bot-background.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+}

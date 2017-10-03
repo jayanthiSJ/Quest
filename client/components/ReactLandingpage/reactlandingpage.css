@@ -1,0 +1,127 @@
+.inset {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,0.6),
+    0 1px 1px rgba(0,0,0,0.1);
+  background-color: transparent !important;
+  z-index: 999;
+}
+
+.inset img {
+  border-radius: inherit;
+  width: inherit;
+  height: inherit;
+  display: block;
+  position: relative;
+  z-index: 998;
+}
+
+.input-group{
+  align:center;
+  width:130%;
+  margin-left:5%;
+  margin-top:2%;
+}
+
+.username{
+  margin-top: 15%;
+  font-size: 125%;
+  font-family: 'Times New Roman';
+}
+
+.profileImg{
+  margin-right: 1%;
+}
+
+.tabpane{
+  margin-top:12%;
+}
+
+.navbar{
+  position:fixed;
+  margin-top:0%;
+  font-family: 'Times New Roman';
+}
+
+
+.dropdown-menu{
+  position: absolute;
+  margin-right:-15%;
+  font-family: 'Times New Roman';
+}
+
+.questionAnswer{
+  margin-top: 10%;
+}
+
+.copyright{
+  margin-top:20px;
+  font-size:20px;
+}
+
+.svgicon{
+  width:130%;
+  height:130%;
+}
+
+.vote{
+  text-align:center;
+  margin-left:70%;
+  font-size:130%;
+  font-weight:bold;
+  margin-bottom:-7%;
+}
+
+.voteBtn{
+  margin:2%;
+  align-items: center;
+}
+
+.voteCnt{
+  margin:1%;
+  font-weight: bold;
+  font-size: 180%;
+  font-family: 'Times New Roman';
+}
+
+.answers{
+  font-size: 180%;
+  font-family: 'Times New Roman';
+}
+.text{
+  margin-top:5%;
+  margin-right:5%;
+  margin-left:5%;
+  padding-right:5%;
+  padding-left:5%;
+  font-Family: 'Times New Roman';
+}
+.youranswer{
+  text-align: center;
+  font-size: 130%;
+  font-weight: bold;
+  margin:3%;
+  font-Family: 'Times New Roman';
+}
+
+.question{
+  font-Family: 'Times New Roman';
+  font-size:190%;
+  text-decoration: none;
+}
+
+.individualquestion{
+  font-Family: 'Times New Roman';
+  font-size:90%;
+  text-decoration: none;
+}
+
+.question p::first-letter{
+  text-transform:uppercase;
+}
+
+p::first-letter{
+  text-transform:uppercase;
+}
