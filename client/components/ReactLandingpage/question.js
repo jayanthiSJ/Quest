@@ -53,7 +53,7 @@ const styles = {
   }
 };
 
-
+var user = cookies.get('displayname');
 const dateToFormat = '1976-04-19T12:59-0500';
 export default class Question extends React.Component {
   constructor(props) {
@@ -66,6 +66,8 @@ export default class Question extends React.Component {
         answers:'',
         openAnswer: false,
         openEditor: false,
+        newAnswer:'',
+        buttonStatus:true
       };
 
     }
@@ -76,7 +78,18 @@ export default class Question extends React.Component {
     if((this.props.answerCount)<=1){
       this.setState({answer:'answer'});
     }
+    console.log(user);
+    if(user == undefined){
+      this.setState({buttonStatus:true});
+    }
+    else{
+      this.setState({buttonStatus:false});
+    }
+
   }
+
+
+
   fetchAnswer(){
     var that =this;
     that.setState({openAnswer:true});
@@ -107,19 +120,25 @@ export default class Question extends React.Component {
     this.setState({openAnswer: false,openEditor: false});
   }
 
-  titleChange(){
-
-  }
-  descriptionChange(){
-
+  answerChange(e){
+    this.setState({newAnswer:e.target.value});
   }
 
   postAnswer(){
     var that =this;
     that.setState({openEditor:true});
-  }
-  postQuestion(){
-
+    var qid = this.props.qid;
+    $.ajax({
+      type:'POST',
+      url:'/answer/'+qid,
+      data:{user:cookies.get('emailId'),answer:that.state.newAnswer},
+      success:function(data){
+          alert("Posted Successfully!!!");
+      },
+      error:function(err){
+          alert(err);
+      }
+      })
   }
 
   followQuestion(){
@@ -138,13 +157,15 @@ export default class Question extends React.Component {
       })
   }
 
+
+
+
   render(){
     const actions = [
-          <FloatingActionButton nini={true} onClick={this.handleClose.bind(this)} style={{align:'center'}}>
+          <FloatingActionButton mini={true} onClick={this.handleClose.bind(this)} style={{align:'center'}}>
             <i className="material-icons">close</i>
           </FloatingActionButton>
         ];
-
     return(
       <div>
       <Paper  zDepth={5} >
@@ -185,18 +206,14 @@ export default class Question extends React.Component {
                 onRequestClose={this.handleClose.bind(this)}
               >
                 <div>
-                <p className="youranswer">Your Answer</p>
+                <h1><center><b><p className="individualquestion">{this.props.question}?</p></b></center></h1>
                 <Divider />
                 <div className="text">
                 <div className="form-group">
-                  <label for="usr">Title</label>
-                  <input type="text" className="form-control" id="usr" onChange={this.titleChange.bind(this)}/>
+                  <label for="exampleTextarea">Answer</label>
+                  <textarea className="form-control" id="exampleTextarea" rows="13" onChange={this.answerChange.bind(this)}></textarea>
                 </div>
-                <div className="form-group">
-                  <label for="exampleTextarea">Description</label>
-                  <textarea className="form-control" id="exampleTextarea" rows="13" onChange={this.descriptionChange.bind(this)}></textarea>
-                </div>
-                <RaisedButton  primary={true} style={styles.submitbtn} onClick={this.postQuestion.bind(this)}>Post your answer</RaisedButton>
+                <RaisedButton  primary={true} style={styles.submitbtn} disabled={this.state.buttonStatus} onClick={this.postAnswer.bind(this)}>Post your answer</RaisedButton>
               </div>
             </div>
               </Dialog>

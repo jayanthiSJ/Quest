@@ -14,7 +14,7 @@ import Neo4jimg from './../../images/neo4j.jpg';
 import Angularimg from './../../images/angular.jpg';
 import './landingpage.css';
 import Navbar from './navbar.js';
-//import Navbar1 from '../ReactLandingpage/navbar.js';
+import Navbar1 from '../ReactLandingpage/navbar.js';
 import Tabs from '../ReactLandingpage/tabs.js';
 import $ from 'jquery';
 
@@ -108,17 +108,19 @@ class Landingpage extends React.Component {
   };
 
   componentWillMount(){
-    var displayname = cookies.get('displayname');
-    this.setState({
-      username:displayname
-    });
-    console.log("displayname:"+this.state.username);
-    var uname = this.state.username;
-    if(uname != ''){
+
+  }
+
+  /*changeNavbar(loginStatus){
+    alert("inside navbar");
+    alert(loginStatus.loginStatus);
+    if(loginStatus.loginStatus){
+      alert("inside if");
       this.setState({loginStatus:true});
     }
+    alert(this.state.loginStatus);
   }
-  /*ajax call for home page*/
+/*ajax call for home page*/
   visitSite()
  {
      this.setState({visitSite:true});
@@ -165,11 +167,10 @@ class Landingpage extends React.Component {
       }
     ];
 
-
   return(
   <div >
   <div className="navs">
-   {!(this.state.loginStatus)?<Navbar/>:''}
+   <Navbar/>
  </div>
    <hr/>
    {this.state.visitSite?<Tabs/>:

@@ -17,22 +17,23 @@ const styles = {
     paddingTop: 16,
     marginBottom: 12,
     fontWeight: 400,
-    marginLeft:'8%'
+    marginLeft:'8%',
+
   },
 
   tab:{
-    marginTop:'6%',
+    marginTop:'-3%',
     marginLeft:'0%',
     width:'100%',
-    fontFamily: 'Times New Roman'
+    fontFamily: 'Times New Roman',
+    paddingTop: '5%'
   },
 
   tabBtn:{
     backgroundColor:grey900,
-    fontFamily: 'Times New Roman'
+    fontFamily: 'Times New Roman',
   }
 };
-
 
 class Questiontabs extends React.Component {
 

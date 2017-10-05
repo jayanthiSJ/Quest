@@ -16,8 +16,16 @@ addQuestion: function(req, res) {
                       });
               },
               addAnswer:function(req, res) {
-                      console.log("ADD addAnswer");
-                      res.send("dd");
+                var qid = req.params.questionid;
+                var answer = req.body.answer;
+                var user = req.body.user;
+                console.log(user);
+                console.log(answer);
+                let query = `match (u:User{name:"${user}"}),(q:Question) where id(q)=${qid}\
+                             merge (u)<-[:answered_by]-(a:Answer{value:"${answer}"})-[:answer_of]->(q) return q,a`;
+                session.run(query).then(function(data){
+                      res.send(data);
+                });
               },
               getQuestions:function(req, res) {
                       if(req.params.name == 'topquestions'){
@@ -70,21 +78,20 @@ addQuestion: function(req, res) {
                         "intent" : ['what','when','can you say something','define','where','why','how','who','explain','difference','distinguish']
                       }
 
-                      let query = 'MATCH (k:Keywords)<-[:Question_of]-(q:Question)-[:intent]-(i:QuestionIntent)\
-                                      , (q)-[:answer_of]-(a:Answer) where k.name in {keywords} and i.value in {intent} return q, a';
+                      let query = `MATCH (k:Keywords)<-[:Question_of]-(q:Question)-[:intent]-(i:QuestionIntent), (q)-[:answer_of]-(a:Answer)-[:answered_by]->(u:User)
+                                  optional match (a:Answer)<-[l:likes]-(:User)
+                                  optional match (a:Answer)<-[d:dislikes]-(:User) where k.name in ['jsx'] and i.value in ['what'] return a,u,count(l) as likes,count(d) as dislikes`;
                       session.run(query,params).then(function(data){
-
                         var result ;
                         if(data.records == ''){
-                            result = "No results!!!!!"
+                            result = "No answers!!!!!"
                         }
                         else{
                           result=data.records.map((row,index)=> {
-                              return ({answer :row._fields[1].properties.value});
+                              return ({answer :row._fields[0].properties.value,answered_by:row._fields[1].properties.name,likes:row._fields[2].low,dislikes:row._fields[3].low});
                             });
                           }
-                        console.log(result);
-                        res.send(result);
+                            res.send(result);
                       });
              },
                getTopAnswered:function(req, res) {
@@ -127,11 +134,7 @@ addQuestion: function(req, res) {
               addFollow:function(req,res){
                 console.log(req.params.questionid);
                 var qid = req.params.questionid;
-                let query = 'match (a:Answer)-[:answer_of]->(n:Question) where id(n)=${qid}\
-                              with a match (a)-[:answered_by]->(u:User)\
-                              with a,u optional match(a)<-[l:likes]-(:User)\
-                              with a,u,count(l) as likes optional  match(a)<-[d:dislikes]-(:User)\
-                              return a,u,likes,count(d) as dislikes'
+                let query = ''
 
                 session.run(query,params).then(function(data){
                   console.log(JSON.stringify(data));

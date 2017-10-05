@@ -1,10 +1,12 @@
 import React from 'react';
 import './landingpage.css';
 import Defaultimg from './../../images/default_profile.jpg';
-import Logo from './../../images/QandA.jpg';
 import {Link,Redirect} from 'react-router-dom';
+import Update_profile from './../Updateprofile/Update_profile.js';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import IndividualQuestion from '../ReactLandingpage/individualquestion.js';
+import Dialog from 'material-ui/Dialog';
 import Cookies from 'universal-cookie';
-
 const cookies = new Cookies();
 
 class Navbar extends React.Component {
@@ -17,11 +19,17 @@ class Navbar extends React.Component {
         username:'',
         password:'',
         searchValue:'',
-        logStatus:false
+        logStatus:false,
+        logout:false,
+        loginStatus:'',
+        openAnswer: false,
+        answers:''
       }
     };
 
-
+    handleClose(){
+      this.setState({openAnswer: false});
+    }
 
     changeFirstname(e){
       this.setState({firstname:e.target.value});
@@ -97,10 +105,13 @@ class Navbar extends React.Component {
               alert("User doesnt exists...Please signup");
             }
             else{
-              that.setState({loginStatus:true});
+              that.setState({logStatus:true});
               var displayname = response.firstname+" "+response.lastname;
-              cookies.set('displayname', displayname, { path: '/' });
-              console.log(cookies.get(displayname));
+              var emailId = that.state.username;
+              cookies.set('displayname', displayname);
+              cookies.set('emailId',emailId);
+              alert(that.state.logStatus);
+              alert(cookies.get('displayname'));
               alert("Successfully logged!!!")
             }
         },
@@ -108,17 +119,27 @@ class Navbar extends React.Component {
             alert("Login failed!!Try again....");
         }
       })
+      alert(that.state.logStatus);
     }
 
     search(){
-      var search = this;
-      console.log("search:"+search.state.searchValue);
+      var that = this;
+      that.setState({openAnswer:true});
       $.ajax({
         url:'/search',
         type: 'POST',
-        data:{searchValue:search.state.searchValue},
-        success: function(response) {
-            alert("success:"+JSON.stringify(response));
+        data:{searchValue:that.state.searchValue},
+        success: function(answers) {
+          var answers;
+          if(answers == 'No answers!!!!!'){
+            answers = 'No answers!!!!!'
+          }
+          else{
+            answers = answers.map((row,index)=> {
+             return <IndividualQuestion answer={row.answer} answered_by={row.answered_by} likes={row.likes} dislikes={row.dislikes} key = {index}/>
+           });
+         }
+         that.setState({answers : answers});
         },
         error: function(err) {
             console.log(err);
@@ -129,8 +150,33 @@ class Navbar extends React.Component {
       })
     }
 
+    logout(){
+            alert(cookies.get('displayname'));
+            cookies.remove('displayname');
+            alert(cookies.get('displayname'));
+            var self=this;
+              $.ajax({
+                   url:'/users/logOut',
+                   type:'GET',
+                   success:function(data){
+                       self.setState({logStatus:false});
+                   },
+                   error:function(err){
+                     alert('Failed to logout!!!');
+                   }
+              });
+    }
 
 render(){
+  const actions = [
+        <FloatingActionButton mini={true} onClick={this.handleClose.bind(this)} style={{align:'center'}}>
+          <i className="material-icons">close</i>
+        </FloatingActionButton>
+      ];
+
+   if(this.state.logout){
+              this.setState({loginStatus: <Redirect to='/'/>}) ;
+       }
   return(
 <div className="row ">
  <div className="col-xs-6 col-md-12">
@@ -144,7 +190,7 @@ render(){
                 <span className="icon-bar"></span>
                 <span className="icon-bar"></span>
                 </button>
-                <img className="qaimage" src="../../images/QandA.jpg"/>
+                <img className="qaimage" src="../../images/answer.png"/>
              </div>
 
               <div id="navbar" className="navbar-collapse collapse ">
@@ -153,20 +199,49 @@ render(){
                    <div className="input-group">
                        <input type="text" className="form-control" placeholder="Search"  onChange={this.changeSearchValue.bind(this)}/>
                        <div className="input-group-btn">
-                           <button className="btn btn-default"  onClick={this.search.bind(this)}><i className="glyphicon glyphicon-search"></i></button>
+                           <button className="btn btn-default"  onClick={this.search.bind(this)}><i className="glyphicon glyphicon-search"></i>
+                           <Dialog
+                               actions={actions}
+                               modal={false}
+                               open={this.state.openAnswer}
+                               autoDetectWindowHeight={true}
+                               autoScrollBodyContent={true}
+                               repositionOnUpdate={true}
+                               onRequestClose={this.handleClose.bind(this)}
+                             >
+                               <h1><center><b><p className="individualquestion">{this.state.searchValue}?</p></b></center></h1>
+                               {this.state.answers}
+                             </Dialog>
+                           </button>
                        </div>
                    </div>
 
                </div>
 
-                <ul className="nav navbar-nav navbar-right bdr">
-                   <li><a href="#" data-toggle="modal" data-target="#at-login">Sign in</a></li>
-                </ul>
+               {this.state.logStatus?<ul className="nav navbar-nav navbar-right profileImg">
+                       <li className='username'><p><b><i>{cookies.get('displayname')}</i></b></p></li>
+                       <li className="dropdown">
+                         <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                         <img className="inset" src={Defaultimg}/>
+                          </a>
+                         <ul className="dropdown-menu" role="menu">
+                           <li><a data-toggle="modal" data-target="#profile"><i className="fa fa-user"></i> Profile</a></li>
+                           <li className="divider"></li>
+                           <li><a href="#" onClick={this.logout.bind(this)}><span className="fa fa-power-off" ></span> Log Out</a></li>
+                           {this.state.logStatus}
+                         </ul>
+                       </li>
+                     </ul>:<ul className="nav navbar-nav navbar-right bdr">
+                              <li><a href="#" data-toggle="modal" data-target="#at-login">Sign in</a></li>
+                              </ul>}
              </div>
           </div>
        </nav>
     </header>
  </div>
+
+
+
  <section className="at-login-form">
     {/*MODAL LOGIN*/}
     <div className="modal fade" id="at-login" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -197,7 +272,7 @@ render(){
              <div className="modal-footer">
                 <div className="row">
                    <div className="col-md-6">
-                      <p className="ta-l">Don't have an account ? </p>
+                      <p className="ta-l">Dont have an account ? </p>
                    </div>
                    <div className="col-md-4 col-md-offset-2">
                       <button className="btn-gst"  data-toggle="modal"  data-dismiss="modal" data-target="#at-signup" >Sign Up </button>
@@ -325,6 +400,7 @@ render(){
        </div>
     </div>
  </section>
+{this.state.sample ? <Sample/> : " "}
 </div>
 )};
 };

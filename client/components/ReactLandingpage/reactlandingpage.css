@@ -17,6 +17,9 @@
   position: relative;
   z-index: 998;
 }
+.row{
+  margin-bottom: 0px;
+}
 
 .input-group{
   align:center;

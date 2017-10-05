@@ -1,6 +1,5 @@
-
 .qaimage{
-  height: 80px;
+  height: 100px;
   width: 120px;
   margin: 0px;
 }
@@ -11,7 +10,7 @@
 }
 
 .bg-image{
-  background-image: url("./../../images/Q&A-background.jpg");
+  background-image: url("./../../images/best.jpg");
   background-size: cover;
   background-repeat: no-repeat;
 }
@@ -50,6 +49,12 @@
 .navbar{
   position:fixed;
   width:100%;
+}
+.form-control{
+  margin-top: 20px;
+}
+.btn-default{
+  margin-top: 20px;
 }
 /*.header-tp .navbar-default {
 	border-color:transparent!important;
@@ -121,6 +126,11 @@
 }
 
 /*######################## LOGIN/SIGNUP PAGE START ##################################*/
+
+.navbar-nav{
+  margin-top: 8px;
+  font-weight: bold;
+}
 .at-login-form .btn-fb
 {
 	display: inline-block;
@@ -250,6 +260,9 @@
 	margin: 5px 0 10px;
 color: red;
 }
+.ta-l{
+  font-style: italic;
+}
 
  .at-login-form .btn-gst
 {
@@ -258,6 +271,7 @@ padding: 6px 12px;
 margin-bottom: 0;
 font-size: 14px;
 font-weight: 400;
+font-weight: bold;
 line-height: 1.42857143;
 text-align: center;
 white-space: nowrap;
@@ -326,7 +340,9 @@ background-color: transparent;
 .flip-container, .front, .back {
 	width: 320px;
 	height: 427px;
+
 }
+
 
 .flipper {
 	-webkit-transition: 0.6s;
@@ -342,6 +358,7 @@ background-color: transparent;
 	transform-style: preserve-3d;
 
 	position: relative;
+  margin-left: 150px;
 }
 
 .front, .back {
@@ -352,6 +369,7 @@ background-color: transparent;
 	position: absolute;
 	top: 0;
 	left: 0;
+
 }
 
 .front {

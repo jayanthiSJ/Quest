@@ -23,21 +23,7 @@ class Navbar extends React.Component {
   }
 
 
-logout(){
-        alert(cookies.get('displayname'));
-        cookies.remove('displayname');
-        var self=this;
-          $.ajax({
-               url:'/users/logOut',
-               type:'GET',
-               success:function(data){
-                   self.setState({logout:true});
-               },
-               error:function(err){
-                 alert('Failed to logout!!!');
-               }
-          });
-}
+
 
 search1(){
   var search = this;
@@ -57,9 +43,7 @@ search1(){
 }
 
 render(){
-  if(this.state.logout){
-              this.setState({logStatus: <Redirect to='/'/>}) ;
-       }
+
   return(
     <div >
     <nav className="navbar navbar-default navbar-static-top" role="navigation">
@@ -87,39 +71,10 @@ render(){
           </form>
       </div>
 
-      <ul className="nav navbar-nav navbar-right profileImg">
-              <li className='username'><p><b><i>{cookies.get('displayname')}</i></b></p></li>
-              <li className="dropdown">
-                <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                <img className="inset" src={Defaultimg}/>
-                 </a>
-                <ul className="dropdown-menu" role="menu">
-                  <li><a data-toggle="modal" data-target="#profile"><i className="fa fa-user"></i> Profile</a></li>
-                  <li className="divider"></li>
-                  <li><a href="#" onClick={this.logout.bind(this)}><span className="fa fa-power-off" ></span> Log Out</a></li>
-                  {this.state.logStatus}
-                </ul>
-              </li>
-            </ul>
+
     </div>
   </nav>
-  <div id="profile" className="modal fade" role="dialog">
-  <div className="modal-dialog">
-    <div className="modal-content">
-      <div className="modal-header">
-        <button type="button" className="close" data-dismiss="modal">&times;</button>
-        <h4 className="modal-title">Edit profile</h4>
-      </div>
-      <div className="modal-body">
-          <Update_profile/>
-      </div>
-      <div className="modal-footer">
-        <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
 
-  </div>
-</div>
       </div>
 
 )};

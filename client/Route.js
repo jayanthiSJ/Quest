@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import {render} from 'react-dom';
-import {BrowserRouter as Router, Route} from 'react-router-dom';
+import {HashRouter as Router, Route} from 'react-router-dom';
 import Landingpage from './components/Landingpage/landingpage';
+import Navbar from './components/ReactLandingpage/navbar';
 import IndividualQuestion from './components/ReactLandingpage/individualquestion.js';
 import Reactlandingpage from './components/ReactLandingpage/reactlandingpage';
 import Editor from './components/ReactLandingpage/texteditor.js';
