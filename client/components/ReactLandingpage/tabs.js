@@ -44,21 +44,22 @@ class Questiontabs extends React.Component {
         topratedquestions:'',
         latestquestions:'',
         unansweredquestions:'',
+        topansweredquestions:''
       };
     }
 
     componentWillMount(){
-      const self=this;
+      const that=this;
       var name = 'topquestions';
          $.ajax({
            type:'GET',
            url:'/question/'+name,
            data:{},
-           success:function(callback){
-          var  topratedQuestions = callback.map((row,index)=> {
-               return <Question question = {row.question} followCount={row.followcount} postedBy={row.postedBy} answerCount={row.answercount} qid={row.questionid} key = {index}/>
+           success:function(data){
+          var  topratedQuestions = data.map((row,index)=> {
+               return <Question name="topquestions" question = {row.question} followCount={row.followcount} postedBy={row.postedBy} answerCount={row.answercount} qid={row.questionid} key = {index}/>
              });
-             self.setState({topratedquestions : topratedQuestions});
+             that.setState({topratedquestions : topratedQuestions});
            },
            error:function(err){
              alert(err);
@@ -73,17 +74,17 @@ class Questiontabs extends React.Component {
     }
 
         getTopQuestions(){
-          const self=this;
+          const that=this;
           var name = 'topquestions';
              $.ajax({
                type:'GET',
                url:'/question/'+name,
                data:{},
-               success:function(callback){
-              var  topratedQuestions = callback.map((row,index)=> {
-                   return <Question question = {row.question} followCount={row.followcount} postedBy={row.postedBy} answerCount={row.answercount} qid={row.questionid} key = {index}/>
+               success:function(data){
+              var  topratedQuestions = data.map((row,index)=> {
+                   return <Question name="topquestions" question = {row.question} followCount={row.followcount} postedBy={row.postedBy} answerCount={row.answercount} qid={row.questionid} key = {index}/>
                  });
-                 self.setState({topratedquestions : topratedQuestions});
+                 that.setState({topratedquestions : topratedQuestions});
                },
                error:function(err){
                  alert(err);
@@ -92,70 +93,64 @@ class Questiontabs extends React.Component {
          }
 
          getLatestQuestions(){
-           const self=this;
+           var that=this;
            var name = 'latestquestions';
+           var count;
               $.ajax({
                 type:'GET',
                 url:'/question/'+name,
                 data:{},
-                success:function(callback){
-               var  latestquestions = callback.map((row,index)=> {
-                    return <Question question = {row.question} followCount={row.followcount} postedBy={row.postedBy} answerCount={row.answercount} qid={row.questionid} key = {index}/>
-                  });
-                  self.setState({latestquestions : latestquestions});
-                },
-                error:function(err){
-                  alert(err);
-                }
-              });
+                 success:function(data){
+                   console.log("data",data)
+                   var  latestQuestions = data.map((row,index)=> {
+                  return <Question name="latestquestions" question = {row.question} followCount={row.followcount} postedBy={row.postedBy} timestamp={row.time} answerCount={row.answercount} qid={row.questionid}  key = {index}/>
+                });
+                that.setState({latestquestions : latestQuestions});
+              },
+              error:function(err){
+                alert(err);
+              }
+        });
           }
 
           getTopAnsweredQuestions(){
-            const self=this;
+            var that=this;
             var name = 'topAnswered';
+            var count;
                $.ajax({
                  type:'GET',
                  url:'/question/'+name,
                  data:{},
-                 success:function(callback){
-                var  topAnswered = callback.map((row,index)=> {
-                     return <Question question = {row.question} followCount={row.followcount} postedBy={row.postedBy} answerCount={row.answercount} qid={row.questionid} key = {index}/>
-                   });
-                   self.setState({topAnswered : topAnswered});
-                 },
-                 error:function(err){
-                   alert(err);
-                 }
-               });
+                  success:function(data){
+                    var  topansweredQuestions = data.map((row,index)=> {
+                   return <Question name="topAnswered" question = {row.question} followCount={row.followcount} postedBy={row.postedBy}  answerCount={row.answercount} qid={row.questionid}  key = {index}/>
+                 });
+                 that.setState({topansweredquestions : topansweredQuestions});
+               },
+               error:function(err){
+                 alert(err);
+               }
+         });
           }
 
          getUnAnsweredQuestions(){
-           const self3=this;
+           var that=this;
            var name = 'unanswered';
            var count;
               $.ajax({
                 type:'GET',
                 url:'/question/'+name,
                 data:{},
-                 success:function(callback){
-            console.log(callback);
-               var  unansweredQuestions = callback.result.records.map((row,index)=> {
-              console.log("count:"+row._fieldLookup.follow_count);
-              if(row._fieldLookup.follow_count == 'undefined')
-              {
-                count = 0;
+                 success:function(data){
+                   console.log("data",data);
+                   var  unansweredQuestions = data.map((row,index)=> {
+                  return <Question name="unanswered" question = {row.question} followCount={row.followcount} postedBy={row.postedBy}  qid={row.questionid} key = {index}/>
+                });
+                that.setState({unansweredquestions : unansweredQuestions});
+              },
+              error:function(err){
+                alert(err);
               }
-              else{
-                count = row._fieldLookup.follow_count;
-              }
-              console.log(count);
-              return <Question question = {row._fields[0].properties.value} followCount={count} key = {index}/>
-            })
-            self3.setState({unansweredquestions : unansweredQuestions});
-          },
-          error:function(err){
-            alert(err);
-          }
         });
          }
 render(){
@@ -186,7 +181,7 @@ render(){
             {this.state.latestquestions}
           </div>
           <div style={styles.slide}>
-            {this.state.unansweredquestions}
+            {this.state.topansweredquestions}
           </div>
           <div style={styles.slide}>
             {this.state.unansweredquestions}
