@@ -70,14 +70,14 @@ class Navbar extends React.Component {
     }
 
 
-  /*ajax call for signupFacebook routes*/
+    /*ajax call for signupFacebook routes*/
     signUpFacebook(){
       $.ajax({
         url:'/users/signupFacebook',
-        type: 'POST',
+        type: 'GET',
         success: function(response) {
-            alert(response);
-            if(response.status == 'signup success'){
+            alert(JSON.stringify(response));
+            if(response == 200 ){
               alert("Successfully registered!!!Please login to visit the site")
             }
             else{
@@ -291,9 +291,9 @@ render(){
                 <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
              </div>
              <div className="modal-body">
-                <button className="btn-fb"> <i className="fa fa-fw fa-facebook pull-left" aria-hidden="true"></i>
+                <button className="btn-fb" onClick={this.signUpFacebook.bind(this)}> <i className="fa fa-fw fa-facebook pull-left" aria-hidden="true"></i>
                 Signup with Facebook	</button> <br/>
-                <button className="btn-gp" onClick={this.signUpFacebook.bind(this)}> <i className="fa fa-fw fa-google-plus pull-left" aria-hidden="true"></i>
+                <button className="btn-gp"> <i className="fa fa-fw fa-google-plus pull-left" aria-hidden="true"></i>
                 Signup with Google	</button> <br/>
                 <div className="signup-or-separator">
                    <span className="h6 signup-or-separator--text">or</span>
