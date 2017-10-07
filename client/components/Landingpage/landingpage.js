@@ -40,7 +40,7 @@ const styles = {
     height:'90%',
     paddingTop: '20%',
     textAlign:'center',
-    marginLeft:'20%'
+    marginLeft:'20%''
   },
   backcardtitle:{
     fontSize:'20%',
