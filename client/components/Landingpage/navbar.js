@@ -190,25 +190,25 @@ render(){
               <div id="navbar" className="navbar-collapse collapse ">
                <div className=" col-sm-8 col-md-6 ">
 
-                   <div className="input-group">
-                       <input type="text" className="form-control" placeholder="Search"  onChange={this.changeSearchValue.bind(this)}/>
-                       <div className="input-group-btn">
-                           <button className="btn btn-default"  onClick={this.search.bind(this)}><i className="glyphicon glyphicon-search"></i>
-                           <Dialog
-                               actions={actions}
-                               modal={false}
-                               open={this.state.openAnswer}
-                               autoDetectWindowHeight={true}
-                               autoScrollBodyContent={true}
-                               repositionOnUpdate={true}
-                               onRequestClose={this.handleClose.bind(this)}
-                             >
-                               <h1><center><b><p className="individualquestion">{this.state.searchValue}?</p></b></center></h1>
-                               {this.state.answers}
-                             </Dialog>
-                           </button>
-                       </div>
+               <div className="input-group">
+                   <input type="text" className="form-control" placeholder="Search"  onChange={this.changeSearchValue.bind(this)}/>
+                   <div className="input-group-btn">
+                       <button className="btn btn-default"  onClick={this.search.bind(this)}><i className="glyphicon glyphicon-search"></i>
+                       <Dialog
+                           actions={actions}
+                           modal={false}
+                           open={this.state.openAnswer}
+                           autoDetectWindowHeight={true}
+                           autoScrollBodyContent={true}
+                           repositionOnUpdate={true}
+                           onRequestClose={this.handleClose.bind(this)}
+                         >
+                           <h1><center><b><p className="individualquestion">{this.state.searchValue}?</p></b></center></h1>
+                           {this.state.answers}
+                         </Dialog>
+                       </button>
                    </div>
+               </div>
 
                </div>
 
