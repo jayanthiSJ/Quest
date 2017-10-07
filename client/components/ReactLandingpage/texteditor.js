@@ -22,7 +22,7 @@ class Editor extends React.Component {
       this.state={
         title:'',
         description:'',
-        openAnswer: false
+        openAnswer: false,
       }
     }
 
@@ -37,7 +37,6 @@ class Editor extends React.Component {
       this.setState({description:e.target.value});
     }
     postQuestion(){
-      alert("inside post");
       var that = this;
       $.ajax({
                url: '/question',
@@ -45,7 +44,8 @@ class Editor extends React.Component {
                data: {
                    title: that.state.title,
                    searchValue: that.state.description,
-                   user:cookies.get('emailId')
+                   user:cookies.get('emailId'),
+                   time:new Date()
                },
                success: function(response) {
                    if(response == "Question posted"){
@@ -57,7 +57,7 @@ class Editor extends React.Component {
                       return <IndividualQuestion answer={row.answer} answered_by={row.answered_by} likes={row.likes} dislikes={row.dislikes} key = {index}/>
                     });
                   }
-                  that.setState({answers : answers});
+
                },
                error: function(err) {
                    alert(err);

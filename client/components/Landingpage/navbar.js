@@ -63,21 +63,19 @@ class Navbar extends React.Component {
             }
         },
         error: function(err) {
-          alert(JSON.stringify(err));
             alert("Registration failed!!Try again....");
         }
       })
     }
 
 
-    /*ajax call for signupFacebook routes*/
+  /*ajax call for signupFacebook routes*/
     signUpFacebook(){
       $.ajax({
         url:'/users/signupFacebook',
-        type: 'GET',
+        type: 'POST',
         success: function(response) {
-            alert(JSON.stringify(response));
-            if(response == 200 ){
+            if(response.status == 'signup success'){
               alert("Successfully registered!!!Please login to visit the site")
             }
             else{
@@ -110,8 +108,6 @@ class Navbar extends React.Component {
               var emailId = that.state.username;
               cookies.set('displayname', displayname);
               cookies.set('emailId',emailId);
-              alert(that.state.logStatus);
-              alert(cookies.get('displayname'));
               alert("Successfully logged!!!")
             }
         },
@@ -119,7 +115,6 @@ class Navbar extends React.Component {
             alert("Login failed!!Try again....");
         }
       })
-      alert(that.state.logStatus);
     }
 
     search(){
@@ -142,24 +137,19 @@ class Navbar extends React.Component {
          that.setState({answers : answers});
         },
         error: function(err) {
-            console.log(err);
-            alert(err);
-            console.log(JSON.stringify(err));
-            //alert("Search failed!!Try again....");
+            alert("Search failed!!Try again....");
         }
       })
     }
 
     logout(){
-            alert(cookies.get('displayname'));
             cookies.remove('displayname');
-            alert(cookies.get('displayname'));
-            var self=this;
+            var that=this;
               $.ajax({
                    url:'/users/logOut',
                    type:'GET',
                    success:function(data){
-                       self.setState({logStatus:false});
+                       that.setState({logStatus:false,logout:true});
                    },
                    error:function(err){
                      alert('Failed to logout!!!');
@@ -291,9 +281,9 @@ render(){
                 <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
              </div>
              <div className="modal-body">
-                <button className="btn-fb" onClick={this.signUpFacebook.bind(this)}> <i className="fa fa-fw fa-facebook pull-left" aria-hidden="true"></i>
+                <button className="btn-fb"> <i className="fa fa-fw fa-facebook pull-left" aria-hidden="true"></i>
                 Signup with Facebook	</button> <br/>
-                <button className="btn-gp"> <i className="fa fa-fw fa-google-plus pull-left" aria-hidden="true"></i>
+                <button className="btn-gp" onClick={this.signUpFacebook.bind(this)}> <i className="fa fa-fw fa-google-plus pull-left" aria-hidden="true"></i>
                 Signup with Google	</button> <br/>
                 <div className="signup-or-separator">
                    <span className="h6 signup-or-separator--text">or</span>
@@ -400,7 +390,7 @@ render(){
        </div>
     </div>
  </section>
-{this.state.sample ? <Sample/> : " "}
+
 </div>
 )};
 };

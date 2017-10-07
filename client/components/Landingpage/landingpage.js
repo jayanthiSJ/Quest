@@ -14,7 +14,6 @@ import Neo4jimg from './../../images/neo4j.jpg';
 import Angularimg from './../../images/angular.jpg';
 import './landingpage.css';
 import Navbar from './navbar.js';
-import Navbar1 from '../ReactLandingpage/navbar.js';
 import Tabs from '../ReactLandingpage/tabs.js';
 import $ from 'jquery';
 
@@ -67,7 +66,6 @@ const styles = {
     width:'25%',
     height:'25%',
     marginTop:'-15%',
-    //border:'5px solid transparent',
     borderColor:'white'
   },
   recentquestion:{
@@ -107,7 +105,6 @@ class Landingpage extends React.Component {
     }
   };
 
-/*ajax call for home page*/
   visitSite()
  {
      this.setState({visitSite:true});

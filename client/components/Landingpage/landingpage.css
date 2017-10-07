@@ -26,9 +26,7 @@
 .navbar-nav a:hover,.navbar-nav a:visited{
 	color:grey!important;
 	}
-/*.dropdown-menu {
-	background-color:grey;
-	}*/
+
 .collapse .navbar-nav li a{
 	font-family: 'Aladin';
 	font-size:20px;
@@ -56,19 +54,7 @@
 .btn-default{
   margin-top: 20px;
 }
-/*.header-tp .navbar-default {
-	border-color:transparent!important;
-}
-.header-tp .bdr li:nth-child(odd)
-{
-	border-left: 1px solid rgba(255, 255, 255, 0.44);
-}
 
-.header-tp .bdr li:nth-child(even)
-{
-	border-right: 1px solid rgba(255, 255, 255, 0.44);
-	border-left: 1px solid rgba(255, 255, 255, 0.44);
-}*/
 .header-tp .bdr li
 {
 	padding:15px 0px;
@@ -112,7 +98,6 @@
 	background-image: none;
 	border: 1px solid transparent;
 	border-radius: 0px;
-	/*color: #fff;*/
 }
 .mrgn-top
 {

@@ -27,14 +27,12 @@ module.exports = function(passport) {
                     }
                     // User and password both match, return user from done method
                     // which will be treated like success
-                    console.log(user);
                     return done(null, user);
                 }
             );
         }));
 
     var validPassword = function(user, password) {
-        console.log("user.password: == " + user.password + "+++password-==" + password);
         return password == user.password;
     }
 }

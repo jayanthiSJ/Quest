@@ -49,7 +49,7 @@ class Questiontabs extends React.Component {
     }
 
     componentWillMount(){
-      const that=this;
+      var that=this;
       var name = 'topquestions';
          $.ajax({
            type:'GET',
@@ -74,7 +74,7 @@ class Questiontabs extends React.Component {
     }
 
         getTopQuestions(){
-          const that=this;
+          var that=this;
           var name = 'topquestions';
              $.ajax({
                type:'GET',
@@ -95,13 +95,11 @@ class Questiontabs extends React.Component {
          getLatestQuestions(){
            var that=this;
            var name = 'latestquestions';
-           var count;
               $.ajax({
                 type:'GET',
                 url:'/question/'+name,
                 data:{},
                  success:function(data){
-                   console.log("data",data)
                    var  latestQuestions = data.map((row,index)=> {
                   return <Question name="latestquestions" question = {row.question} followCount={row.followcount} postedBy={row.postedBy} timestamp={row.time} answerCount={row.answercount} qid={row.questionid}  key = {index}/>
                 });
@@ -116,7 +114,6 @@ class Questiontabs extends React.Component {
           getTopAnsweredQuestions(){
             var that=this;
             var name = 'topAnswered';
-            var count;
                $.ajax({
                  type:'GET',
                  url:'/question/'+name,
@@ -136,7 +133,6 @@ class Questiontabs extends React.Component {
          getUnAnsweredQuestions(){
            var that=this;
            var name = 'unanswered';
-           var count;
               $.ajax({
                 type:'GET',
                 url:'/question/'+name,

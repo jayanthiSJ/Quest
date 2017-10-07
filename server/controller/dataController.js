@@ -8,10 +8,9 @@ module.exports = {
     var searchValue = req.body.searchValue;
     var title = req.body.title;
     var user = req.body.user;
-    console.log(searchValue);
+    var time=req.body.time;
     const oldString = searchValue.split(' ');
     const keyword = sw.removeStopwords(oldString);
-    console.log(keyword);
     let intent = [];
 
     for (let i = 0; i < oldString.length; i = i + 1) {
@@ -42,12 +41,12 @@ module.exports = {
                 MATCH (k:Keywords)<-[:Question_of]-(q:Question)-[:intent]->(i:QuestionIntent), (q)<-[:answer_of]-(a:Answer)-[:answered_by]->(u:User)\
               where k.name in {keywords} and i.value in intent\
               optional match (q)<-[:answer_of]-(a)<-[l:likes]-(:User)\
-              optional match (q)<-[:answer_of]-(a)<-[d:dislikes]-(:User)  return a,u,count(l) as likes,count(d) as dislikes`;
+              optional match (q)<-[:answer_of]-(a)<-[d:dislikes]-(:User)  return a,u,count(l) as likes,count(d) as dislikes,a.answered_at as time`;
     session.run(query, params).then(function(data) {
       var result;
       if (data.records == '') {
         let query = `merge (u:User{name:"${user}"})\
-                                merge (q:Question{value:"${searchValue} "})\
+                                merge (q:Question{value:"${searchValue}",asked_at:"${time}"})\
                                 merge (u)<-[:posted_by]-(q) \
                                 merge (m:Keywords{name:"${title}"})\
                                 merge (n:Topic{name:"React"})\
@@ -65,23 +64,21 @@ module.exports = {
             answer: row._fields[0].properties.value,
             answered_by: row._fields[1].properties.name,
             likes: row._fields[2].low,
-            dislikes: row._fields[3].low
+            dislikes: row._fields[3].low,
+            time:roe._fields[4]
           });
         });
         res.send(result);
       }
-
     });
   },
   addAnswer: function(req, res) {
     var qid = req.params.questionid;
     var answer = req.body.answer;
     var user = req.body.user;
-    console.log(user);
-    console.log(answer);
-    console.log(qid);
+    var time = req.body.time;
     let query = `match (u:User{name:"${user}"}),(q:Question) where id(q)=${qid}\
-                            merge(a:Answer{value:"${answer}"})
+                            merge(a:Answer{value:"${answer}",answered_at:"${time}"})
                              merge (u)<-[:answered_by]-(a)-[:answer_of]->(q) return q,a`;
     session.run(query).then(function(data) {
       res.send(data);
@@ -92,7 +89,7 @@ module.exports = {
       let query = 'match (n:Question)<-[r:follows]-(:User)\
                                      with n,count(r) as follow_count,id(n) as qid optional match (n)-[:posted_by]->(u:User)\
                                      with n,follow_count,qid,u as postedBy optional match (n)<-[a:answer_of]-(:Answer)\
-                                     return n,follow_count,qid,postedBy,count(a) as answer_count order by follow_count desc'
+                                     return n,follow_count,qid,postedBy,count(a) as answer_count,n.asked_at as time order by follow_count desc'
       session.run(query).then(function(data) {
         var result = data.records.map((row, index) => {
           return ({
@@ -100,7 +97,8 @@ module.exports = {
             followcount: row._fields[1].low,
             questionid: row._fields[2].low,
             postedBy: row._fields[3].properties.name,
-            answercount: row._fields[4].low
+            answercount: row._fields[4].low,
+            time:row._fields[5]
           });
         });
         res.send(result);
@@ -111,7 +109,6 @@ module.exports = {
                    with n,count(f) as follow_count,qid,postedBy optional match (n)<-[a:answer_of]-(:Answer)\
                    return n,follow_count,qid,postedBy,count(a) as answer_count,n.asked_at as time order by time desc`;
       session.run(query).then(function(data) {
-        console.log(JSON.stringify(data));
         var result = data.records.map((row, index) => {
           return ({
             question: row._fields[0].properties.value,
@@ -119,7 +116,7 @@ module.exports = {
             questionid: row._fields[2].low,
             postedBy: row._fields[3].properties.name,
             answercount: row._fields[4].low,
-            time:row._fields[5].low
+            time:row._fields[5]
           });
         });
         res.send(result);
@@ -128,7 +125,7 @@ module.exports = {
       let query = `match (q:Question)<-[c:answer_of]-(a:Answer)<-[r:likes]-(:User)\
                    with q,count(r) as likes,count(c) as answer_count,id(q) as qid optional match (q)-[:posted_by]->(u:User)\
                    with q,likes,answer_count,qid,u as postedBy optional match (q)<-[f:follows]-(:User)\
-                   return q,likes,answer_count,qid,postedBy,count(f) as follow_count order by likes desc`;
+                   return q,likes,answer_count,qid,postedBy,count(f) as follow_count,q.asked_at as time order by likes desc`;
       session.run(query).then(function(data) {
         var result = data.records.map((row, index) => {
           return ({
@@ -137,6 +134,7 @@ module.exports = {
             questionid: row._fields[3].low,
             postedBy: row._fields[4].properties.name,
             followcount: row._fields[5].low,
+            time:row._fields[6]
           });
         });
         res.send(result);
@@ -147,15 +145,15 @@ module.exports = {
       let query = `MATCH (n:Question) WHERE NOT (n)<-[:answer_of]-(:Answer)\
                    with n,id(n) as qid optional match (n)-[:posted_by]->(u:User)\
                    with n,qid,u as postedBy optional match (n)<-[a:follows]-(:User)\
-                   return n,qid,postedBy,count(a) as follow_count`;
+                   return n,qid,postedBy,count(a) as follow_count,n.asked_at as time`;
       session.run(query).then(function(data) {
-        console.log(JSON.stringify(data));
         var result = data.records.map((row, index) => {
           return ({
             question: row._fields[0].properties.value,
             questionid: row._fields[1].low,
             postedBy: row._fields[2].properties.name,
-            followcount: row._fields[3].low
+            followcount: row._fields[3].low,
+            time:row._fields[4]
           });
         });
         res.send(result);
@@ -163,13 +161,10 @@ module.exports = {
     }
   },
   getSearch: function(req, res) {
-    console.log("hiiiiii getsearch");
     sw = require('stopword');
     var searchValue = req.body.searchValue;
-    console.log(searchValue);
     const oldString = searchValue.split(' ');
     const keyword = sw.removeStopwords(oldString);
-    console.log(keyword);
     let intent = [];
 
     for (let i = 0; i < oldString.length; i = i + 1) {
@@ -190,10 +185,6 @@ module.exports = {
         }
       }
     }
-
-    console.log(intent);
-
-
     const params = {
       "keywords": keyword,
       "intent": intent
@@ -204,7 +195,7 @@ module.exports = {
                                     MATCH (k:Keywords)<-[:Question_of]-(q:Question)-[:intent]->(i:QuestionIntent), (q)<-[:answer_of]-(a:Answer)-[:answered_by]->(u:User)\
                                   where k.name in {keywords} and i.value in intent\
                                   optional match (q)<-[:answer_of]-(a)<-[l:likes]-(:User)\
-                                  optional match (q)<-[:answer_of]-(a)<-[d:dislikes]-(:User)  return a,u,count(l) as likes,count(d) as dislikes`;
+                                  optional match (q)<-[:answer_of]-(a)<-[d:dislikes]-(:User)  return a,u,count(l) as likes,count(d) as dislikes,a.answered_at as time`;
     session.run(query, params).then(function(data) {
       var result;
       if (data.records == '') {
@@ -215,38 +206,21 @@ module.exports = {
             answer: row._fields[0].properties.value,
             answered_by: row._fields[1].properties.name,
             likes: row._fields[2].low,
-            dislikes: row._fields[3].low
+            dislikes: row._fields[3].low,
+            time:row._fields[4]
           });
         });
       }
       res.send(result);
-      console.log(result);
     });
   },
-  getTopAnswered: function(req, res) {
-    console.log("hiiiiii topanswered");
-    if (req.params.name == 'topquestions') {
-      console.log("hiiiiii top questions");
-      let query = 'match (n:Question)-[r:follows]-()\
-                                    return n, count(r) as rel_count\
-                                    order by rel_count desc limit 50'
-      session.run(query).then(function(result1) {
-        console.log(JSON.stringify(result1));
-        res.send({
-          result: result1
-        });
-      });
-    }
-  },
-
   getAnswer: function(req, res) {
-    console.log("qid:" + req.params.questionid);
     var qid = req.params.questionid;
     let query = `match (a:Answer)-[:answer_of]->(n:Question) where id(n)=${qid}\
-                              with a  match (a)-[:answered_by]->(u:User)\
-                              with a,u optional match(a)<-[l:likes]-(:User)\
-                              with a,u,count(l) as likes optional  match(a)<-[d:dislikes]-(:User)\
-                              return a,u,likes,count(d) as dislikes`;
+                              with a,id(a) as aid  match (a)-[:answered_by]->(u:User)\
+                              with a,u,aid optional match(a)<-[l:likes]-(:User)\
+                              with a,u,aid,count(l) as likes optional  match(a)<-[d:dislikes]-(:User)\
+                              return a,u,likes,count(d) as dislikes,aid,a.answered_at as time`;
 
     session.run(query).then(function(data) {
       var result;
@@ -258,7 +232,9 @@ module.exports = {
             answer: row._fields[0].properties.value,
             answered_by: row._fields[1].properties.name,
             likes: row._fields[2].low,
-            dislikes: row._fields[3].low
+            dislikes: row._fields[3].low,
+            answerId:row._fields[4].low,
+            time:row._fields[5]
           });
         });
       }
@@ -267,7 +243,6 @@ module.exports = {
   },
 
   addFollow: function(req, res) {
-    console.log(req.params.questionid);
     var qid = req.params.questionid;
     var user = req.body.user;
     let query = `match (q:Question {id:${qid}}),(u:User {name:"${user}"})\

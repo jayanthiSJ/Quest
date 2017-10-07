@@ -53,12 +53,10 @@ const styles = {
 };
 
 var user = cookies.get('displayname');
-const dateToFormat = '1976-04-19T12:59-0500';
 export default class Question extends React.Component {
   constructor(props) {
       super(props);
       this.state = {
-        time:new Date().toString(),
         user:'Nive',
         vote:'votes',
         answer:'answers',
@@ -78,7 +76,6 @@ export default class Question extends React.Component {
     if((this.props.answerCount)<=1){
       this.setState({answer:'answer'});
     }
-    console.log(user);
     if(user == undefined){
       this.setState({buttonStatus:true});
     }
@@ -106,7 +103,7 @@ export default class Question extends React.Component {
           }
           else{
             answers = answers.map((row,index)=> {
-             return <IndividualQuestion answer={row.answer} answered_by={row.answered_by} likes={row.likes} dislikes={row.dislikes} key = {index}/>
+             return <IndividualQuestion answer={row.answer} answered_by={row.answered_by} likes={row.likes} dislikes={row.dislikes} answerId={row.answerId} key = {index}/>
            });
          }
          that.setState({answers : answers});
@@ -136,7 +133,7 @@ export default class Question extends React.Component {
     $.ajax({
       type:'POST',
       url:'/answer/'+qid,
-      data:{user:cookies.get('emailId'),answer:that.state.newAnswer},
+      data:{user:cookies.get('emailId'),answer:that.state.newAnswer,time:new Date()},
       success:function(data){
           that.setState({openEditor: false});
           alert("Posted Successfully!!!");
@@ -148,7 +145,6 @@ export default class Question extends React.Component {
   }
 
   followQuestion(){
-    alert("follow");
     var qid = this.props.qid;
     $.ajax({
       type:'POST',
@@ -191,7 +187,7 @@ export default class Question extends React.Component {
                   <h1><center><b><p className="individualquestion">{this.props.question}?</p></b></center></h1>
                   {this.state.answers}
                 </Dialog>
-              <TableRowColumn colSpan="3" style={styles.col3}>-asked  <Moment fromNow>{this.props.timestamp}</Moment>   by  <a href="">{this.props.postedBy}</a></TableRowColumn>
+              <TableRowColumn colSpan="3" style={styles.col3}>-asked  <Moment fromNow>{(this.props.timestamp).toString()}</Moment>   by  <a href="">{this.props.postedBy}</a></TableRowColumn>
             </TableRowColumn>
             <TableRowColumn colSpan="2" >
               <FloatingActionButton   style={styles.followBtn} onClick={this.followQuestion.bind(this)}>

@@ -77,7 +77,7 @@ render(){
                   {this.state.dislike}
               </Col>
                 <Col start='xs sm md lg' xs={2} sm={4} md={6} >
-                  <CardText style={styles.cardtext1}>-answered  <Moment fromNow>{this.state.time}</Moment> by <a>{this.props.answered_by}</a></CardText>
+                  <CardText style={styles.cardtext1}>-answered  <Moment fromNow>{(this.props.time).toString()}</Moment> by <a>{this.props.answered_by}</a></CardText>
                 </Col>
             </Row>
         </Card>
