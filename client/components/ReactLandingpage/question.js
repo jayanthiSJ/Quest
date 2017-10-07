@@ -29,7 +29,6 @@ const styles = {
     fontSize:'120%'
   },
   col2:{
-    backgroundColor:indigo200,
     textAlign: 'center',
     border:'10px solid',
     borderColor:'white',
@@ -67,7 +66,8 @@ export default class Question extends React.Component {
         openAnswer: false,
         openEditor: false,
         newAnswer:'',
-        buttonStatus:true
+        buttonStatus:true,
+        displayAnswerCount:true
       };
 
     }
@@ -86,9 +86,10 @@ export default class Question extends React.Component {
       this.setState({buttonStatus:false});
     }
 
+    if(this.props.name == "unanswered"){
+      this.setState({displayAnswerCount:false});
+    }
   }
-
-
 
   fetchAnswer(){
     var that =this;
@@ -124,15 +125,20 @@ export default class Question extends React.Component {
     this.setState({newAnswer:e.target.value});
   }
 
-  postAnswer(){
+  openDialog(){
     var that =this;
     that.setState({openEditor:true});
+  }
+
+  postAnswer(){
+    var that =this;
     var qid = this.props.qid;
     $.ajax({
       type:'POST',
       url:'/answer/'+qid,
       data:{user:cookies.get('emailId'),answer:that.state.newAnswer},
       success:function(data){
+          that.setState({openEditor: false});
           alert("Posted Successfully!!!");
       },
       error:function(err){
@@ -172,9 +178,6 @@ export default class Question extends React.Component {
     });
   }
 
-
-
-
   render(){
     const actions = [
           <FloatingActionButton mini={true} onClick={this.handleClose.bind(this)} style={{align:'center'}}>
@@ -188,7 +191,7 @@ export default class Question extends React.Component {
         <TableBody displayRowCheckbox={false}>
           <TableRow >
             <TableRowColumn colSpan="2" style={styles.col1}>{this.props.followCount} {this.state.vote}</TableRowColumn>
-            <TableRowColumn colSpan="2" style={styles.col2}>{this.props.answerCount} {this.state.answer}</TableRowColumn>
+            {this.state.displayAnswerCount?<TableRowColumn colSpan="2" style={styles.col2}>{this.props.answerCount} {this.state.answer}</TableRowColumn>:''}
             <TableRowColumn colSpan="4" >
               <a className="question" onClick={this.fetchAnswer.bind(this)}><p>{this.props.question+'?'}</p></a>
               <Dialog
@@ -203,7 +206,7 @@ export default class Question extends React.Component {
                   <h1><center><b><p className="individualquestion">{this.props.question}?</p></b></center></h1>
                   {this.state.answers}
                 </Dialog>
-              <TableRowColumn colSpan="3" style={styles.col3}>-asked  <Moment fromNow>{this.state.time}</Moment>   by  <a href="">{this.props.postedBy}</a></TableRowColumn>
+              <TableRowColumn colSpan="3" style={styles.col3}>-asked  <Moment fromNow>{this.props.timestamp}</Moment>   by  <a href="">{this.props.postedBy}</a></TableRowColumn>
             </TableRowColumn>
             <TableRowColumn colSpan="2" >
               <RaisedButton  primary={true} style={styles.followBtn} onClick={this.followQuestion.bind(this)}>

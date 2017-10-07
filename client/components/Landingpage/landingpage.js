@@ -102,23 +102,10 @@ class Landingpage extends React.Component {
       colorAngular : lightBlue400,
       neo4j:'Neo4j is a graph database management system developed by Neo4j, Inc. ',
       colorNeo4j : tealA200,
-       value: 1
+      value: 1
     }
   };
 
-  componentWillMount(){
-
-  }
-
-  /*changeNavbar(loginStatus){
-    alert("inside navbar");
-    alert(loginStatus.loginStatus);
-    if(loginStatus.loginStatus){
-      alert("inside if");
-      this.setState({loginStatus:true});
-    }
-    alert(this.state.loginStatus);
-  }
 /*ajax call for home page*/
   visitSite()
  {
@@ -132,37 +119,43 @@ class Landingpage extends React.Component {
         img: Reactimg,
         title: "React JS",
         definition:this.state.react,
-        color:this.state.colorReact
+        color:this.state.colorReact,
+        disable:false
       },
       {
         img: Mongoimg,
         title: "MongoDB",
         definition:this.state.mongo,
-        color:this.state.colorMongo
+        color:this.state.colorMongo,
+        disable:true
       },
       {
         img: Nodeimg,
         title: "Node JS",
         definition:this.state.node,
-        color:this.state.colorNode
+        color:this.state.colorNode,
+        disable:true
       },
       {
         img: Expressimg,
         title: "Express JS",
         definition:this.state.express,
-        color:this.state.colorExpress
+        color:this.state.colorExpress,
+        disable:true
       },
       {
         img: Angularimg,
         title: "Angular JS",
         definition:this.state.angular,
-        color:this.state.colorAngular
+        color:this.state.colorAngular,
+        disable:true
       },
       {
         img: Neo4jimg,
         title: "Neo4j",
         definition:this.state.neo4j,
-        color:this.state.colorNeo4j
+        color:this.state.colorNeo4j,
+        disable:true
       }
     ];
 
@@ -198,7 +191,7 @@ class Landingpage extends React.Component {
                              {data.definition}</CardText>}
                         </CardActions>
 
-                        <RaisedButton  style={styles.raisedbtn} secondary={true} onClick={this.visitSite.bind(this)}>Visit site</RaisedButton>
+                        <RaisedButton  style={styles.raisedbtn} disabled={data.disable} secondary={true} onClick={this.visitSite.bind(this)}>Visit site</RaisedButton>
                      </Card>
                   </div>
                </div>

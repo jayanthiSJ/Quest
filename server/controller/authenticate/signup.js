@@ -1,12 +1,13 @@
-
 var LocalStrategy = require('passport-local').Strategy;
 var UserModel = require('../../models/signup');
+var driver = require('../../config/neo4j.js');
+var session = driver.session();
 
 module.exports = function(passport){
     passport.use('signup', new LocalStrategy({
         passReqToCallback:true
     },
-    function(req, username, password, done){
+    function(req, username, password, done,res){
         UserModel.findOne({'username':username},function(err,user){
             if(err){
                 return done(err);
@@ -26,8 +27,14 @@ module.exports = function(passport){
                     if(err){
                         return done(err);
                     }
-                    return done(null, newUser);
+                    let query = `CREATE (a:User { name: "${username}"}) RETURN a`;
+                    session.run(query).then(function(result){
+                        return done(null, newUser);
+                    });
+
                 });
+
+
             }
 
         });

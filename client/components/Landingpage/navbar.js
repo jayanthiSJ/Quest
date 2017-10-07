@@ -106,13 +106,18 @@ class Navbar extends React.Component {
             }
             else{
               that.setState({logStatus:true});
-              var displayname = response.firstname+" "+response.lastname;
-              var emailId = that.state.username;
-              cookies.set('displayname', displayname);
-              cookies.set('emailId',emailId);
-              alert(that.state.logStatus);
-              alert(cookies.get('displayname'));
-              alert("Successfully logged!!!")
+       var displayname = response.user.firstname+" "+response.user.lastname;
+       var emailId = that.state.username;
+       var token = response.token;
+       cookies.set('displayname', displayname);
+       cookies.set('emailId',emailId);
+       cookies.set('token',token);
+       alert(that.state.logStatus);
+       alert(cookies.get('displayname'));
+       alert(cookies.get('token'));
+       localStorage.setItem('token',token);
+       //console.log(response.body.token);
+       alert("Successfully logged!!!");
             }
         },
         error: function(err) {
@@ -160,6 +165,7 @@ class Navbar extends React.Component {
                    type:'GET',
                    success:function(data){
                        self.setState({logStatus:false});
+                       localStorage.removeItem('token');
                    },
                    error:function(err){
                      alert('Failed to logout!!!');
