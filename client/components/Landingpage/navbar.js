@@ -70,14 +70,14 @@ class Navbar extends React.Component {
     }
 
 
-    /*ajax call for signupFacebook routes*/
+  /*ajax call for signupFacebook routes*/
     signUpFacebook(){
       $.ajax({
         url:'/users/signupFacebook',
-        type: 'GET',
+        type: 'POST',
         success: function(response) {
-            alert(JSON.stringify(response));
-            if(response == 200 ){
+            alert(response);
+            if(response.status == 'signup success'){
               alert("Successfully registered!!!Please login to visit the site")
             }
             else{
@@ -106,13 +106,18 @@ class Navbar extends React.Component {
             }
             else{
               that.setState({logStatus:true});
-              var displayname = response.firstname+" "+response.lastname;
-              var emailId = that.state.username;
-              cookies.set('displayname', displayname);
-              cookies.set('emailId',emailId);
-              alert(that.state.logStatus);
-              alert(cookies.get('displayname'));
-              alert("Successfully logged!!!")
+       var displayname = response.user.firstname+" "+response.user.lastname;
+       var emailId = that.state.username;
+       var token = response.token;
+       cookies.set('displayname', displayname);
+       cookies.set('emailId',emailId);
+       cookies.set('token',token);
+       alert(that.state.logStatus);
+       alert(cookies.get('displayname'));
+       alert(cookies.get('token'));
+       localStorage.setItem('token',token);
+       //console.log(response.body.token);
+       alert("Successfully logged!!!");
             }
         },
         error: function(err) {
@@ -160,6 +165,7 @@ class Navbar extends React.Component {
                    type:'GET',
                    success:function(data){
                        self.setState({logStatus:false});
+                       localStorage.removeItem('token');
                    },
                    error:function(err){
                      alert('Failed to logout!!!');
@@ -291,9 +297,9 @@ render(){
                 <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
              </div>
              <div className="modal-body">
-                <button className="btn-fb" onClick={this.signUpFacebook.bind(this)}> <i className="fa fa-fw fa-facebook pull-left" aria-hidden="true"></i>
+                <button className="btn-fb"> <i className="fa fa-fw fa-facebook pull-left" aria-hidden="true"></i>
                 Signup with Facebook	</button> <br/>
-                <button className="btn-gp"> <i className="fa fa-fw fa-google-plus pull-left" aria-hidden="true"></i>
+                <button className="btn-gp" onClick={this.signUpFacebook.bind(this)}> <i className="fa fa-fw fa-google-plus pull-left" aria-hidden="true"></i>
                 Signup with Google	</button> <br/>
                 <div className="signup-or-separator">
                    <span className="h6 signup-or-separator--text">or</span>
@@ -400,7 +406,7 @@ render(){
        </div>
     </div>
  </section>
-{this.state.sample ? <Sample/> : " "}
+
 </div>
 )};
 };

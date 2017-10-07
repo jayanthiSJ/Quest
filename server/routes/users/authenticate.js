@@ -1,4 +1,5 @@
 var express = require('express');
+const jwt = require('jsonwebtoken');
 var router = express.Router();
 let profileController = require('../../controller/profileController');
 var isAuthenticated = function (req, res, next) {
@@ -12,68 +13,42 @@ var isAuthenticated = function (req, res, next) {
 };
 module.exports = function(passport) {
 
-   {/*} router.post('/signup', function(req, res, next) {
-    passport.authenticate('signup', function(err, newUser, info){
-      if(err) return res.status(500).json({status: 'signup failed'});
-      else if(newUser) return res.status(200).json({status:'signup success'});
-      else return res.status(500).json({status:'username already exsist'});
-    })(req,res,next);
-  });*/}
-
-
    /* signup action */
     router.post('/signup',function(req,res,next){
       passport.authenticate('signup',function(err,newUser,info){
         if(newUser){
-          res.send("Successfully registered");
+           return res.status(200).json({status:'Successfully registered'});
         }
         else if(err){
-          res.send(err);
+          return res.status(500).json({status: 'Signup failed'});
         }
         else{
-          res.send("User exists");
+          return res.status(500).json({status:'User exists'});
         }
       })(req,res,next);
     });
-    router.get('/signupFacebook', passport.authenticate('facebook',{
-      session: false,
-      scope: 'email'
-  }), (req, res) => {
-    console.log('inside sign up fb auth');
-      res.json(req.user);
-  });
-    // handle the callback after facebook has authenticated the user
-    router.get('/signupFacebook/callback',
-    passport.authenticate('facebook', {failureRedirect: '/#/'}), (req, res) => {
-        // res.cookie('token', req.user.facebook.token);
-        // res.cookie('authType', req.user.facebook.authType);
-        console.log("facebook");
-        res.cookie('username', req.user.facebook.displayName);
-        // res.cookie('profilepicture', req.user.facebook.photos);
-        res.cookie('email', req.user.facebook.email);
-        // RegisteredUser.update({
-        //     'facebook.email': req.user.facebook.email
-        // }, {
-        //     $set: {
-        //         'local.loggedinStatus': true
-        //     }
-        // }, function(error) {
-        //     if (error) {
-        //         logger.debug('status not updated');
-        //     } else {
-        //         logger.debug('LoginStatus updated Successfully');
-        //     }
-        // });
-        res.redirect('/');
-    });
-    // router.post('/auth/facebook/callback',passport.authenticate('signupFacebook',{
-    //     successRedirect:'/home',
-    //     failureRedirect:'/users/loginfailed',
-    // }));
-    router.post('/login',passport.authenticate('login',{
+
+    /* signupFacebook action */
+    router.post('/signupFacebook',passport.authenticate('signupFacebook',{
         successRedirect:'/home',
         failureRedirect:'/users/loginfailed',
     }));
+
+    /*login action*/
+    router.post('/login',function(req,res,next){
+      passport.authenticate('login',function(err,user,info){
+        console.log(user);
+        if(user){
+           var token = jwt.sign({user: user}, 'MyS3CR3T', {expiresIn: 7200});
+           return res.status(200).json({user: user, token: token});
+        }
+        else{
+          return res.status(500).json(err);
+        }
+      })(req,res,next);
+    });
+
+    /*logout action*/
     router.get('/logOut',function(request, response) {
      console.log("in logout");
      request.session.destroy(function(req,res,err) {

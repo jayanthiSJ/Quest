@@ -44,12 +44,15 @@ class Questiontabs extends React.Component {
         topratedquestions:'',
         latestquestions:'',
         unansweredquestions:'',
-        topansweredquestions:''
+        topansweredquestions:'',
+        token: null
       };
     }
 
     componentWillMount(){
       const that=this;
+      let token = localStorage.getItem('token');
+      console.log(token);
       var name = 'topquestions';
          $.ajax({
            type:'GET',
@@ -59,7 +62,7 @@ class Questiontabs extends React.Component {
           var  topratedQuestions = data.map((row,index)=> {
                return <Question name="topquestions" question = {row.question} followCount={row.followcount} postedBy={row.postedBy} answerCount={row.answercount} qid={row.questionid} key = {index}/>
              });
-             that.setState({topratedquestions : topratedQuestions});
+             that.setState({topratedquestions : topratedQuestions, token: token});
            },
            error:function(err){
              alert(err);
@@ -167,7 +170,7 @@ render(){
           <Tab style={styles.tabBtn} label="Top Answered" value={2} onActive={this.getTopAnsweredQuestions.bind(this)}/>
           <Tab style={styles.tabBtn} label="Unanswered" value={3} onActive={this.getUnAnsweredQuestions.bind(this)}/>
           <Tab style={styles.tabBtn} label="Ask questions" value={4} />
-        </Tabs>
+          </Tabs>
 
         <SwipeableViews
           index={this.state.slideIndex}
@@ -187,7 +190,7 @@ render(){
             {this.state.unansweredquestions}
           </div>
           <div style={styles.slide}>
-            <Editor/>
+            {this.state.token !== null ? <Editor/> : <center>Signin/Signup to continue </center>}
           </div>
         </SwipeableViews>
   </div>

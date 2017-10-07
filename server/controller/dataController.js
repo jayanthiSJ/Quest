@@ -4,6 +4,7 @@ let intentLexicon = require('../lexicon/intentLexicon.json');
 
 module.exports = {
   addQuestion: function(req, res) {
+    console.log("hii adddd");
     sw = require('stopword');
     var searchValue = req.body.searchValue;
     var title = req.body.title;
@@ -47,7 +48,7 @@ module.exports = {
       var result;
       if (data.records == '') {
         let query = `merge (u:User{name:"${user}"})\
-                                merge (q:Question{value:"${searchValue} "})\
+                                merge (q:Question{value:"${searchValue}",asked_at:TIMESTAMP()})\
                                 merge (u)<-[:posted_by]-(q) \
                                 merge (m:Keywords{name:"${title}"})\
                                 merge (n:Topic{name:"React"})\
@@ -70,7 +71,6 @@ module.exports = {
         });
         res.send(result);
       }
-
     });
   },
   addAnswer: function(req, res) {
@@ -243,10 +243,10 @@ module.exports = {
     console.log("qid:" + req.params.questionid);
     var qid = req.params.questionid;
     let query = `match (a:Answer)-[:answer_of]->(n:Question) where id(n)=${qid}\
-                              with a  match (a)-[:answered_by]->(u:User)\
-                              with a,u optional match(a)<-[l:likes]-(:User)\
-                              with a,u,count(l) as likes optional  match(a)<-[d:dislikes]-(:User)\
-                              return a,u,likes,count(d) as dislikes`;
+                              with a,id(a) as aid  match (a)-[:answered_by]->(u:User)\
+                              with a,u,aid optional match(a)<-[l:likes]-(:User)\
+                              with a,u,aid,count(l) as likes optional  match(a)<-[d:dislikes]-(:User)\
+                              return a,u,likes,count(d) as dislikes,aid`;
 
     session.run(query).then(function(data) {
       var result;
@@ -258,7 +258,8 @@ module.exports = {
             answer: row._fields[0].properties.value,
             answered_by: row._fields[1].properties.name,
             likes: row._fields[2].low,
-            dislikes: row._fields[3].low
+            dislikes: row._fields[3].low,
+            answerId:row._fields[4].low
           });
         });
       }

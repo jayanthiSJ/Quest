@@ -106,7 +106,7 @@ export default class Question extends React.Component {
           }
           else{
             answers = answers.map((row,index)=> {
-             return <IndividualQuestion answer={row.answer} answered_by={row.answered_by} likes={row.likes} dislikes={row.dislikes} key = {index}/>
+             return <IndividualQuestion answer={row.answer} answered_by={row.answered_by} likes={row.likes} dislikes={row.dislikes} answerId={row.answerId} key = {index}/>
            });
          }
          that.setState({answers : answers});
