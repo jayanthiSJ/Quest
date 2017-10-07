@@ -4,6 +4,7 @@ let intentLexicon = require('../lexicon/intentLexicon.json');
 
 module.exports = {
   addQuestion: function(req, res) {
+    console.log("hii adddd");
     sw = require('stopword');
     var searchValue = req.body.searchValue;
     var title = req.body.title;
@@ -241,17 +242,76 @@ module.exports = {
       res.send(result);
     });
   },
+              addFollow:function(req,res){
+                console.log(req.params.questionid);
+                var qid = req.params.questionid;
+                var user=req.body.user;
+                let query = `match (u:User {name:"${user}"}),(q:Question)\
+                           where not (q)<-[:follows]-(u) and id(q)=${qid}\
+                           merge(q)<-[:follows]-(u) return q,u`;
 
-  addFollow: function(req, res) {
-    var qid = req.params.questionid;
-    var user = req.body.user;
-    let query = `match (q:Question {id:${qid}}),(u:User {name:"${user}"})\
-                             WHERE NOT (q)<-[:follows]-(u)\
-                             merge(q)<-[:follows]-(u) return u`;
-    session.run(query).then(function(data) {
-      res.send(data);
-    });
+                session.run(query).then(function(data){
+                  console.log(JSON.stringify(data));
+                    var result=data.records.map((row,index)=> {
+                        return ({answer :row._fields[0].properties.value});
+                      });
+                      console.log(result);
+                      res.send(result);
+                });
+              },
+              unFollow:function(req,res){
+                console.log(req.params.questionid);
+                var qid=req.params.questionid;
+                var user=req.body.user;
+                let query=`match (u:User{name:"${user}"}),(q:Question) where id(q)=${qid}\
+                            match (u)-[r:follows]->(q)\
+                             delete r`;
+                     session.run(query).then(function(data){
+                       console.log(JSON.stringify(data));
+                       var result=data.records.map((row,index)=> {
+                         return ({answer :row._fields[0].properties.value});
+                                   });
+                                   console.log(result);
+                                   res.send(result);
+                             });
+              },
+            answerLikes:function(req,res){
+              console.log("fdshafgsj");
+              console.log(req.params.answerid);
+              var aid=req.params.answerid;
+              var user=req.body.user;
+              let query=`match (u:User{name:"${user}"}),(a:Answer)\
+                          where not  (u)-[:likes]->(a) and id(a)=${aid}\
+                           with u as u , a as a optional match (u)-[r:dislikes]->(a) delete r\
+                           merge (u)-[:likes]->(a) return a;`
 
-  }
+                      session.run(query).then(function(data){
+                        console.log(JSON.stringify(data));
+                        var result=data.records.map((row,index)=>{
+                          return ({answer:row._fields[0].properties.value});
+                        });
+                        console.log(result);
+                        res.send(result);
+                      });
+            },
+            answerDislikes:function(req,res){
+              console.log("hello days")
+              console.log("aid"+req.params.answerid);
+              var aid=req.params.answerid;
+              var user=req.body.user;
+              let query=`match (u:User{name:"${user}"}),(a:Answer)\
+                          where not  (u)-[:dislikes]->(a) and id(a)=${aid}\
+                           with u as u , a as a optional match (u)-[r:likes]->(a) delete r\
+                           merge (u)-[:dislikes]->(a) return a;`
+
+                      session.run(query).then(function(data){
+                        console.log(JSON.stringify(data));
+                        var result=data.records.map((row,index)=>{
+                          return ({answer:row._fields[0].properties.value});
+                        });
+                        console.log(result);
+                        res.send(result);
+                      });
+            },
 
 };

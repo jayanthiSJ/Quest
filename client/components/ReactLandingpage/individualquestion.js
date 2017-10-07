@@ -5,7 +5,9 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import {Card, CardText} from 'material-ui/Card';
 import Moment from 'react-moment';
 import './reactlandingpage.css';
+import Cookies from 'universal-cookie';
 
+const cookies = new Cookies();
 const styles = {
   card:{
     margin:'2%',
@@ -39,7 +41,23 @@ class IndividualQuestion extends React.Component {
 like(){
   var that = this;
   var up=that.state.like+1;
+  var aid = this.props.answerid;
   that.setState({like:up,disable:true});
+   $.ajax({
+             url:'/answerLikes/'+aid,
+             data:{user:cookies.get('emailId')},
+             type:'POST',
+             success:function(data)
+             {
+               alert("liked successfully");
+             },
+             error:function(err)
+             {
+               alert(err);
+             }
+
+
+   });
 
 }
 
@@ -47,6 +65,22 @@ dislike(){
   var that = this;
   var down=that.state.dislike+1;
   that.setState({dislike:down,disable:true});
+  var aid = this.props.answerid;
+  $.ajax({
+            url:'/answerDislikes/'+aid,
+            data:{user:cookies.get('emailId')},
+            type:'POST',
+            success:function(data)
+            {
+              alert("disliked successfully");
+            },
+            error:function(err)
+            {
+              alert(err);
+            }
+
+
+  });
 
 }
 
@@ -61,7 +95,7 @@ render(){
             </Row>
             <Row center='xs sm md lg'>
               <Col start xs={1} sm={1} md={1} className="voteBtn">
-                <FloatingActionButton  mini={true} disabled={this.state.disable} onClick={this.like.bind(this)}>
+                <FloatingActionButton  mini={true}  onClick={this.like.bind(this)}>
                   <i className="material-icons">thumb_up</i>
                 </FloatingActionButton>
               </Col>
@@ -69,7 +103,7 @@ render(){
                   {this.state.like}
               </Col>
               <Col start='xs sm md lg' xs={1} sm={1} md={1} className="voteBtn">
-                <FloatingActionButton  mini={true} disabled={this.state.disable} onClick={this.dislike.bind(this)}>
+                <FloatingActionButton  mini={true}  onClick={this.dislike.bind(this)}>
                   <i className="material-icons">thumb_down</i>
                 </FloatingActionButton>
               </Col>

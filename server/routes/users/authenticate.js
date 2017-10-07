@@ -1,4 +1,5 @@
 var express = require('express');
+var jwt = require('jsonwebtoken');
 var router = express.Router();
 let profileController = require('../../controller/profileController');
 var isAuthenticated = function (req, res, next) {
@@ -38,7 +39,8 @@ module.exports = function(passport) {
       passport.authenticate('login',function(err,user,info){
         console.log(user);
         if(user){
-           return res.status(200).json(user);
+           var token = jwt.sign({user: user}, 'MyS3CR3T', {expiresIn: 7200});
+           return res.status(200).json({user: user, token: token});
         }
         else{
           return res.status(500).json(err);

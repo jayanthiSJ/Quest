@@ -104,10 +104,13 @@ class Navbar extends React.Component {
             }
             else{
               that.setState({logStatus:true});
-              var displayname = response.firstname+" "+response.lastname;
+              var displayname = response.user.firstname+" "+response.user.lastname;
               var emailId = that.state.username;
+              var token = response.token;
               cookies.set('displayname', displayname);
               cookies.set('emailId',emailId);
+              cookies.set('token',token);
+              localStorage.setItem('token',token);
               alert("Successfully logged!!!")
             }
         },
@@ -150,6 +153,7 @@ class Navbar extends React.Component {
                    type:'GET',
                    success:function(data){
                        that.setState({logStatus:false,logout:true});
+                       localStorage.removeItem('token');
                    },
                    error:function(err){
                      alert('Failed to logout!!!');
@@ -390,7 +394,6 @@ render(){
        </div>
     </div>
  </section>
-
 </div>
 )};
 };
