@@ -4,7 +4,6 @@ import Defaultimg from './../../images/default_profile.jpg';
 import Logo from './../../images/QandA.jpg';
 import Tabs from './tabs.js';
 import Navbar from '../Landingpage/navbar.js';
-import Navbar1 from './navbar.js';
 import {Link,Redirect} from 'react-router-dom';
 import Cookies from 'universal-cookie';
 

@@ -105,7 +105,7 @@ export default class Question extends React.Component {
           }
           else{
             answers = answers.map((row,index)=> {
-             return <IndividualQuestion answer={row.answer} answered_by={row.answered_by} likes={row.likes} dislikes={row.dislikes} key = {index}/>
+             return <IndividualQuestion answer={row.answer} answered_by={row.answered_by} likes={row.likes} dislikes={row.dislikes} answerid={row.answerId} key = {index}/>
            });
          }
          that.setState({answers : answers});
@@ -147,7 +147,7 @@ export default class Question extends React.Component {
     $.ajax({
       type:'POST',
       url:'/followQuestion/'+qid,
-      data:{user:cookies.get('displayname')},
+      data:{user:cookies.get('emailId')},
       success:function(data){
           alert("follow success");
       },
@@ -155,6 +155,21 @@ export default class Question extends React.Component {
           alert(err);
       }
       })
+  }
+  unFollowQuestion(){
+    alert("unFollowed Successfully");
+    var qid = this.props.qid;
+    $.ajax({
+      type:'POST',
+      url:'/unFollowQuestion/'+qid,
+      data:{user:cookies.get('emailId')},
+      success:function(data){
+          alert("unFollow success");
+      },
+      error:function(err){
+          alert(err);
+      }
+    });
   }
 
 
@@ -191,11 +206,16 @@ export default class Question extends React.Component {
               <TableRowColumn colSpan="3" style={styles.col3}>-asked  <Moment fromNow>{this.state.time}</Moment>   by  <a href="">{this.props.postedBy}</a></TableRowColumn>
             </TableRowColumn>
             <TableRowColumn colSpan="2" >
-              <FloatingActionButton   style={styles.followBtn} onClick={this.followQuestion.bind(this)}>
-                <i className="material-icons">person_add</i>
-              </FloatingActionButton>
+              <RaisedButton  primary={true} style={styles.followBtn} onClick={this.followQuestion.bind(this)}>
+                 Follow
+              </RaisedButton>
             </TableRowColumn>
-            <TableRowColumn colSpan="2" style={styles.col2}><a onClick={this.postAnswer.bind(this)}>Post your answer</a>
+            <TableRowColumn colSpan="2" >
+              <RaisedButton  primary={true} style={styles.followBtn} onClick={this.unFollowQuestion.bind(this)}>
+                 Unfollow
+              </RaisedButton>
+            </TableRowColumn>
+          {/* <TableRowColumn colSpan="2" style={styles.col2}><a onClick={this.postAnswer.bind(this)}>Post your answer</a>
             <Dialog
                 actions={actions}
                 modal={false}
@@ -217,7 +237,7 @@ export default class Question extends React.Component {
               </div>
             </div>
               </Dialog>
-            </TableRowColumn>
+            </TableRowColumn>*/}
           </TableRow>
         </TableBody>
       </Table>

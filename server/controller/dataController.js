@@ -96,26 +96,24 @@ addQuestion: function(req, res) {
              },
                getTopAnswered:function(req, res) {
                       console.log("hiiiiii topanswered");
-                      if(req.params.name == 'topquestions'){
-                        console.log("hiiiiii top questions");
-                        let query = 'match (n:Question)-[r:follows]-()\
+                        let query = 'match (n:Answer)-[r:likes]-(u:Users)\
                                     return n, count(r) as rel_count\
                                     order by rel_count desc limit 50'
                         session.run(query).then(function(result1){
                             console.log(JSON.stringify(result1));
                             res.send({result :result1});
                         });
-                      }
+
               },
 
               getAnswer:function(req,res){
                 console.log("qid:"+req.params.questionid);
                 var qid = req.params.questionid;
                 let query = `match (a:Answer)-[:answer_of]->(n:Question) where id(n)=${qid}\
-                              with a  match (a)-[:answered_by]->(u:User)\
-                              with a,u optional match(a)<-[l:likes]-(:User)\
-                              with a,u,count(l) as likes optional  match(a)<-[d:dislikes]-(:User)\
-                              return a,u,likes,count(d) as dislikes`;
+                              with a ,id(a) as aid match (a)-[:answered_by]->(u:User)\
+                              with a,u,aid optional match(a)<-[l:likes]-(:User)\
+                              with a,u,aid,count(l) as likes optional  match(a)<-[d:dislikes]-(:User)\
+                              return a,u,likes,count(d) as dislikes,aid`;
 
                 session.run(query).then(function(data){
                   var result ;
@@ -124,7 +122,7 @@ addQuestion: function(req, res) {
                   }
                   else{
                     result=data.records.map((row,index)=> {
-                        return ({answer :row._fields[0].properties.value,answered_by:row._fields[1].properties.name,likes:row._fields[2].low,dislikes:row._fields[3].low});
+                        return ({answer :row._fields[0].properties.value,answered_by:row._fields[1].properties.name,likes:row._fields[2].low,dislikes:row._fields[3].low,answerId:row._fields[4].low});
                       });
                     }
                       res.send(result);
@@ -134,18 +132,77 @@ addQuestion: function(req, res) {
               addFollow:function(req,res){
                 console.log(req.params.questionid);
                 var qid = req.params.questionid;
-                let query = ''
+                var user=req.body.user;
+                let query = `match (u:User {name:"${user}"}),(q:Question)\
+                           where not (q)<-[:follows]-(u) and id(q)=${qid}\
+                           merge(q)<-[:follows]-(u) return q,u`;
 
-                session.run(query,params).then(function(data){
+                session.run(query).then(function(data){
                   console.log(JSON.stringify(data));
                     var result=data.records.map((row,index)=> {
-                        return ({answer :row._fields[0].properties.value,answered_by:row._fields[1].properties.name,likes:row._fields[2].low,dislikes:row._fields[3].low});
+                        return ({answer :row._fields[0].properties.value});
                       });
                       console.log(result);
                       res.send(result);
                 });
-                  res.send("follow");
 
-              }
+
+              },
+              unFollow:function(req,res){
+                console.log(req.params.questionid);
+                var qid=req.params.questionid;
+                var user=req.body.user;
+                let query=`match (u:User{name:"${user}"}),(q:Question) where id(q)=${qid}\
+                            match (u)-[r:follows]->(q)\
+                             delete r`;
+
+
+                     session.run(query).then(function(data){
+                       console.log(JSON.stringify(data));
+                       var result=data.records.map((row,index)=> {
+                         return ({answer :row._fields[0].properties.value});
+                                   });
+                                   console.log(result);
+                                   res.send(result);
+                             });
+              },
+            answerLikes:function(req,res){
+              console.log("fdshafgsj");
+              console.log(req.params.answerid);
+              var aid=req.params.answerid;
+              var user=req.body.user;
+              let query=`match (u:User{name:"${user}"}),(a:Answer)\
+                          where not  (u)-[:likes]->(a) and id(a)=${aid}\
+                           with u as u , a as a optional match (u)-[r:dislikes]->(a) delete r\
+                           merge (u)-[:likes]->(a) return a;`
+
+                      session.run(query).then(function(data){
+                        console.log(JSON.stringify(data));
+                        var result=data.records.map((row,index)=>{
+                          return ({answer:row._fields[0].properties.value});
+                        });
+                        console.log(result);
+                        res.send(result);
+                      });
+            },
+            answerDislikes:function(req,res){
+              console.log("hello days")
+              console.log("aid"+req.params.answerid);
+              var aid=req.params.answerid;
+              var user=req.body.user;
+              let query=`match (u:User{name:"${user}"}),(a:Answer)\
+                          where not  (u)-[:dislikes]->(a) and id(a)=${aid}\
+                           with u as u , a as a optional match (u)-[r:likes]->(a) delete r\
+                           merge (u)-[:dislikes]->(a) return a;`
+
+                      session.run(query).then(function(data){
+                        console.log(JSON.stringify(data));
+                        var result=data.records.map((row,index)=>{
+                          return ({answer:row._fields[0].properties.value});
+                        });
+                        console.log(result);
+                        res.send(result);
+                      });
+            },
 
   };

@@ -400,7 +400,6 @@ render(){
        </div>
     </div>
  </section>
-{this.state.sample ? <Sample/> : " "}
 </div>
 )};
 };
