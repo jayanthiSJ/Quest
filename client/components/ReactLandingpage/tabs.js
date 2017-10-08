@@ -36,6 +36,8 @@ const styles = {
   tabBtn:{
     backgroundColor:grey900,
     fontFamily: 'Times New Roman',
+    borderColor:'white',
+    border:'3px solid'
   },
 
   swipe:{
@@ -184,6 +186,7 @@ render(){
         <SwipeableViews
           index={this.state.slideIndex}
           onChangeIndex={this.handleChange.bind(this)}
+          style={{width: '100%',height: '100%',textAlign: 'center',marginTop:'3%',fontFamily: 'Times New Roman'}}
         >
           <div style={styles.slide}>
             {this.state.topratedquestions}

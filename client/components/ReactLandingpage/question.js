@@ -51,6 +51,15 @@ const styles = {
     width:'50%',
     fontFamily: 'Times New Roman',
     marginLeft:'25%'
+  },
+  paper:{
+    borderColor:'black',
+    border:'2px solid',
+    width:'80%',
+    marginLeft:'10%',
+    marginTop:'2%',
+    marginBottom:'2%',
+    marginRight:'10%'
   }
 };
 
@@ -67,7 +76,8 @@ export default class Question extends React.Component {
         buttonStatus:true,
         displayAnswerCount:true,
         postButton:false,
-        followBtn:true
+        followBtn:true,
+        button:false
       };
 
     }
@@ -88,8 +98,18 @@ export default class Question extends React.Component {
     if(this.props.name == "unanswered"){
       this.setState({displayAnswerCount:false});
     }
-    var that = this;
+
     var user = cookies.get('emailId');
+    if(user == 'undefined'){
+      this.setState({button:false});
+      alert("nouser:"+this.state.button);
+    }
+    else{
+      alert("user:"+this.state.button);
+      this.setState({button:true});
+    }
+    
+    var that = this;
     alert(user);
     $.ajax({
       type:'GET',
@@ -224,12 +244,13 @@ export default class Question extends React.Component {
               <TableRowColumn colSpan="3" style={styles.col3}>-asked  <Moment fromNow>{(this.props.timestamp).toString()}</Moment>   by  <a href="">{this.props.postedBy}</a></TableRowColumn>
             </TableRowColumn>
             <TableRowColumn colSpan="2" >
-              {this.state.followBtn?<RaisedButton  primary={true} style={styles.followBtn} onClick={this.followQuestion.bind(this)}>
+              <h1>{this.state.button}</h1>
+              {this.state.button?(this.state.followBtn?<RaisedButton  primary={true} style={styles.followBtn} onClick={this.followQuestion.bind(this)}>
                  Follow
               </RaisedButton>:
               <RaisedButton  primary={true} style={styles.followBtn} onClick={this.unFollowQuestion.bind(this)}>
                  Unfollow
-              </RaisedButton>}
+              </RaisedButton>):''}
             </TableRowColumn>
           {/* <TableRowColumn colSpan="2" style={styles.col2}><a onClick={this.postAnswer.bind(this)}>Post your answer</a>
             <Dialog
