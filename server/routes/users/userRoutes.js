@@ -7,6 +7,7 @@ router.post('/question', dataController.addQuestion);
 router.post('/answer/:questionid', dataController.addAnswer);
 router.get('/answer/:questionid', dataController.getAnswer);
 router.get('/question/:name', dataController.getQuestions);
+router.get('/followStatus',dataController.checkFollowStatus)
 router.post('/followQuestion/:questionid', dataController.addFollow);
 router.post('/unFollowQuestion/:questionid', dataController.unFollow);
 router.post('/answerLikes/:answerid', dataController.answerLikes);

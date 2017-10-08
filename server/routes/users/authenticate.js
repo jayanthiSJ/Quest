@@ -40,6 +40,7 @@ module.exports = function(passport) {
         console.log(user);
         if(user){
            var token = jwt.sign({user: user}, 'MyS3CR3T', {expiresIn: 7200});
+           console.log(token);
            return res.status(200).json({user: user, token: token});
         }
         else{

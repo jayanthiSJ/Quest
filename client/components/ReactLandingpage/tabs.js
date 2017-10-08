@@ -7,9 +7,13 @@ import SwipeableViews from 'react-swipeable-views';
 import Defaultimg from './../../images/default_profile.jpg';
 import Logo from './../../images/QandA.jpg';
 import IndividualQuestion from './individualquestion.js';
+import {Card, CardActions, CardTitle, CardText,CardMedia,CardHeader} from 'material-ui/Card';
 import Question from './question.js';
 import Editor from './texteditor.js';
 import './reactlandingpage.css';
+import Cookies from 'universal-cookie';
+
+const cookies = new Cookies();
 
 const styles = {
   headline: {
@@ -32,9 +36,13 @@ const styles = {
   tabBtn:{
     backgroundColor:grey900,
     fontFamily: 'Times New Roman',
+  },
+
+  swipe:{
+    marginTop:'10%'
   }
 };
-
+var user = cookies.get('displayname');
 class Questiontabs extends React.Component {
 
   constructor(props) {
@@ -45,13 +53,18 @@ class Questiontabs extends React.Component {
         latestquestions:'',
         unansweredquestions:'',
         topansweredquestions:'',
-        token: null
+        token: null,
+        logStatus:false
       };
     }
 
     componentWillMount(){
       var that=this;
       let token = localStorage.getItem('token');
+      alert(user);
+      if(user != ''){
+        that.setState({logStatus:true});
+      }
       var name = 'topquestions';
          $.ajax({
            type:'GET',
@@ -59,7 +72,7 @@ class Questiontabs extends React.Component {
            data:{},
            success:function(data){
           var  topratedQuestions = data.map((row,index)=> {
-               return <Question name="topquestions" question = {row.question} followCount={row.followcount} postedBy={row.postedBy} answerCount={row.answercount} qid={row.questionid} key = {index}/>
+               return <Question name="topquestions" question = {row.question} followCount={row.followcount} postedBy={row.postedBy} timestamp={row.time} answerCount={row.answercount} qid={row.questionid} key = {index}/>
              });
              that.setState({topratedquestions : topratedQuestions, token: token});
            },
@@ -84,7 +97,7 @@ class Questiontabs extends React.Component {
                data:{},
                success:function(data){
               var  topratedQuestions = data.map((row,index)=> {
-                   return <Question name="topquestions" question = {row.question} followCount={row.followcount} postedBy={row.postedBy} answerCount={row.answercount} qid={row.questionid} key = {index}/>
+                   return <Question name="topquestions" question = {row.question} followCount={row.followcount} postedBy={row.postedBy} timestamp={row.time} answerCount={row.answercount} qid={row.questionid} key = {index}/>
                  });
                  that.setState({topratedquestions : topratedQuestions});
                },
@@ -122,7 +135,7 @@ class Questiontabs extends React.Component {
                  data:{},
                   success:function(data){
                     var  topansweredQuestions = data.map((row,index)=> {
-                   return <Question name="topAnswered" question = {row.question} followCount={row.followcount} postedBy={row.postedBy}  answerCount={row.answercount} qid={row.questionid}  key = {index}/>
+                   return <Question name="topAnswered" question = {row.question} followCount={row.followcount} postedBy={row.postedBy}  answerCount={row.answercount} qid={row.questionid} timestamp={row.time}  key = {index}/>
                  });
                  that.setState({topansweredquestions : topansweredQuestions});
                },
@@ -142,7 +155,7 @@ class Questiontabs extends React.Component {
                  success:function(data){
                    console.log("data",data);
                    var  unansweredQuestions = data.map((row,index)=> {
-                  return <Question name="unanswered" question = {row.question} followCount={row.followcount} postedBy={row.postedBy}  qid={row.questionid} key = {index}/>
+                  return <Question name="unanswered" question = {row.question} followCount={row.followcount} postedBy={row.postedBy} timestamp={row.time} qid={row.questionid} key = {index}/>
                 });
                 that.setState({unansweredquestions : unansweredQuestions});
               },
@@ -167,10 +180,10 @@ render(){
           <Tab style={styles.tabBtn} label="Ask questions" value={4} />
           </Tabs>
 
+
         <SwipeableViews
           index={this.state.slideIndex}
           onChangeIndex={this.handleChange.bind(this)}
-          style={styles.swipe}
         >
           <div style={styles.slide}>
             {this.state.topratedquestions}
@@ -185,9 +198,10 @@ render(){
             {this.state.unansweredquestions}
           </div>
           <div style={styles.slide}>
-            {this.state.token !== null ? <Editor/> : <center>Signin/Signup to continue </center>}
+            {(this.state.logStatus) ? <Editor/> : <center><b>Signin/Signup to continue</b></center>}
           </div>
         </SwipeableViews>
+
   </div>
   </div>
 

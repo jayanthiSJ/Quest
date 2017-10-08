@@ -9,9 +9,11 @@ module.exports = {
     var searchValue = req.body.searchValue;
     var title = req.body.title;
     var user = req.body.user;
-    var time=req.body.time;
+    var time = req.body.time;
+    console.log(searchValue);
     const oldString = searchValue.split(' ');
     const keyword = sw.removeStopwords(oldString);
+    console.log(keyword);
     let intent = [];
 
     for (let i = 0; i < oldString.length; i = i + 1) {
@@ -36,15 +38,15 @@ module.exports = {
       "keywords": keyword,
       "intent": intent
     }
-
+    console.log(intent);
     let query = `unwind ${JSON.stringify(intent)} as ques_intent\
                 match (:QuestionIntent{value:ques_intent})-[:same_as]->(baseintent:QuestionIntent) with distinct collect(baseintent.value) as intent\
-                MATCH (k:Keywords)<-[:Question_of]-(q:Question)-[:intent]->(i:QuestionIntent), (q)<-[:answer_of]-(a:Answer)-[:answered_by]->(u:User)\
-              where k.name in {keywords} and i.value in intent\
-              optional match (q)<-[:answer_of]-(a)<-[l:likes]-(:User)\
-              optional match (q)<-[:answer_of]-(a)<-[d:dislikes]-(:User)  return a,u,count(l) as likes,count(d) as dislikes,a.answered_at as time`;
+                MATCH (k:Keywords)<-[:Question_of]-(q:Question)-[:intent]->(i:QuestionIntent)\
+                where k.name in {keywords} and i.value in intent\
+                return q`;
     session.run(query, params).then(function(data) {
       var result;
+       console.log(JSON.stringify(data));
       if (data.records == '') {
         let query = `merge (u:User{name:"${user}"})\
                                 merge (q:Question{value:"${searchValue}",asked_at:"${time}"})\
@@ -60,18 +62,33 @@ module.exports = {
           res.send("Question posted");
         });
       } else {
-        result = data.records.map((row, index) => {
-          return ({
-            answer: row._fields[0].properties.value,
-            answered_by: row._fields[1].properties.name,
-            likes: row._fields[2].low,
-            dislikes: row._fields[3].low,
-            time:roe._fields[4]
-          });
-        });
-        res.send(result);
-      }
-    });
+
+            let query = `unwind ${JSON.stringify(intent)} as ques_intent\
+                                    match (:QuestionIntent{value:ques_intent})-[:same_as]->(baseintent:QuestionIntent) with distinct collect(baseintent.value) as intent\
+                                    MATCH (k:Keywords)<-[:Question_of]-(q:Question)-[:intent]->(i:QuestionIntent), (q)<-[:answer_of]-(a:Answer)-[:answered_by]->(u:User)\
+                                  where k.name in {keywords} and i.value in intent\
+                                  optional match (q)<-[:answer_of]-(a)<-[l:likes]-(:User)\
+                                  optional match (q)<-[:answer_of]-(a)<-[d:dislikes]-(:User)  return a,u,count(l) as likes,count(d) as dislikes,a.answered_at as time,id(a) as aid`;
+            session.run(query, params).then(function(data) {
+              var result;
+              if (data.records == '') {
+                result = "No answers!!!!!"
+              } else {
+                result = data.records.map((row, index) => {
+                  return ({
+                    answer: row._fields[0].properties.value,
+                    answered_by: row._fields[1].properties.name,
+                    likes: row._fields[2].low,
+                    dislikes: row._fields[3].low,
+                    time:row._fields[4],
+                    answerId:row._fields[5].low
+                  });
+                });
+                res.send(result);
+              }
+            });
+              }
+            });
   },
   addAnswer: function(req, res) {
     var qid = req.params.questionid;
@@ -120,6 +137,7 @@ module.exports = {
             time:row._fields[5]
           });
         });
+        console.log(result);
         res.send(result);
       });
     } else if (req.params.name == 'topAnswered') {
@@ -138,6 +156,7 @@ module.exports = {
             time:row._fields[6]
           });
         });
+        console.log(result);
         res.send(result);
       });
     }
@@ -157,6 +176,7 @@ module.exports = {
             time:row._fields[4]
           });
         });
+        console.log(result);
         res.send(result);
       });
     }
@@ -196,7 +216,7 @@ module.exports = {
                                     MATCH (k:Keywords)<-[:Question_of]-(q:Question)-[:intent]->(i:QuestionIntent), (q)<-[:answer_of]-(a:Answer)-[:answered_by]->(u:User)\
                                   where k.name in {keywords} and i.value in intent\
                                   optional match (q)<-[:answer_of]-(a)<-[l:likes]-(:User)\
-                                  optional match (q)<-[:answer_of]-(a)<-[d:dislikes]-(:User)  return a,u,count(l) as likes,count(d) as dislikes,a.answered_at as time`;
+                                  optional match (q)<-[:answer_of]-(a)<-[d:dislikes]-(:User)  return a,u,count(l) as likes,count(d) as dislikes,a.answered_at as time,id(a) as aid`;
     session.run(query, params).then(function(data) {
       var result;
       if (data.records == '') {
@@ -208,10 +228,12 @@ module.exports = {
             answered_by: row._fields[1].properties.name,
             likes: row._fields[2].low,
             dislikes: row._fields[3].low,
-            time:row._fields[4]
+            time:row._fields[4],
+            answerId:row._fields[5].low
           });
         });
       }
+      console.log(result);
       res.send(result);
     });
   },
@@ -235,10 +257,11 @@ module.exports = {
             likes: row._fields[2].low,
             dislikes: row._fields[3].low,
             answerId:row._fields[4].low,
-            time:row._fields[5]
+            time:row._fields[5],
           });
         });
       }
+      console.log(result);
       res.send(result);
     });
   },
@@ -275,9 +298,19 @@ module.exports = {
                                    res.send(result);
                              });
               },
+              checkFollowStatus:function(req,res){
+                  var user = req.query.user;
+                  let query = `match (u:User {name:"${user}"}),(q:Question)\
+                               where (q)<-[:follows]-(u) \
+                               return id(q) as qid`;
+                               session.run(query).then(function(data){
+                                 var result=data.records.map((row,index)=> {
+                                   return ({qid :row._fields[0].low});
+                                });
+                                             res.send(result);
+                                       });
+              },
             answerLikes:function(req,res){
-              console.log("fdshafgsj");
-              console.log(req.params.answerid);
               var aid=req.params.answerid;
               var user=req.body.user;
               let query=`match (u:User{name:"${user}"}),(a:Answer)\
@@ -295,8 +328,6 @@ module.exports = {
                       });
             },
             answerDislikes:function(req,res){
-              console.log("hello days")
-              console.log("aid"+req.params.answerid);
               var aid=req.params.answerid;
               var user=req.body.user;
               let query=`match (u:User{name:"${user}"}),(a:Answer)\

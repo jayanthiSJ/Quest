@@ -23,6 +23,7 @@ class Editor extends React.Component {
         title:'',
         description:'',
         openAnswer: false,
+        answers:''
       }
     }
 
@@ -53,9 +54,10 @@ class Editor extends React.Component {
                    }
                    else{
                      that.setState({openAnswer: true});
-                     answers = answers.map((row,index)=> {
-                      return <IndividualQuestion answer={row.answer} answered_by={row.answered_by} likes={row.likes} dislikes={row.dislikes} key = {index}/>
+                     var answers = response.map((row,index)=> {
+                      return <IndividualQuestion answer={row.answer} answered_by={row.answered_by} likes={row.likes} dislikes={row.dislikes} timestamp={row.time} key = {index}/>
                     });
+                    that.setState({answers:answers});
                   }
 
                },
@@ -85,9 +87,6 @@ class Editor extends React.Component {
               actions={actions}
               modal={false}
               open={this.state.openAnswer}
-              autoDetectWindowHeight={true}
-              autoScrollBodyContent={true}
-              repositionOnUpdate={true}
               onRequestClose={this.handleClose.bind(this)}
             >
               <h1><center><b><p className="individualquestion">{this.state.description}?</p></b></center></h1>

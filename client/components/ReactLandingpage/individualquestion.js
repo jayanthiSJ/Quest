@@ -2,6 +2,7 @@ import React from 'react';
 import Divider from 'material-ui/Divider';
 import {Row,Col} from 'react-flexbox-grid';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
+import RaisedButton from 'material-ui/RaisedButton';
 import {Card, CardText} from 'material-ui/Card';
 import Moment from 'react-moment';
 import './reactlandingpage.css';
@@ -13,7 +14,8 @@ const styles = {
     margin:'2%',
     textAlign:'justify',
     padding:'2%',
-    fontFamily: 'Times New Roman'
+    fontFamily: 'Times New Roman',
+    borderColor:'black'
   },
   cardtext:{
     fontFamily: 'Times New Roman',
@@ -40,7 +42,7 @@ class IndividualQuestion extends React.Component {
 
 like(){
   var that = this;
-  var up=that.state.like+1;
+  var up=that.props.likes+1;
   var aid = this.props.answerid;
   that.setState({like:up,disable:true});
    $.ajax({
@@ -63,7 +65,7 @@ like(){
 
 dislike(){
   var that = this;
-  var down=that.state.dislike+1;
+  var down=that.props.dislike+1;
   that.setState({dislike:down,disable:true});
   var aid = this.props.answerid;
   $.ajax({
@@ -111,7 +113,7 @@ render(){
                   {this.state.dislike}
               </Col>
                 <Col start='xs sm md lg' xs={2} sm={4} md={6} >
-                  <CardText style={styles.cardtext1}>-answered  <Moment fromNow>{(this.props.time).toString()}</Moment> by <a>{this.props.answered_by}</a></CardText>
+                  <CardText style={styles.cardtext1}>-answered  <Moment fromNow>{(this.props.timestamp).toString()}</Moment> by <a>{this.props.answered_by}</a></CardText>
                 </Col>
             </Row>
         </Card>

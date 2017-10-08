@@ -2,7 +2,7 @@ import React from 'react';
 import './landingpage.css';
 import Defaultimg from './../../images/default_profile.jpg';
 import {Link,Redirect} from 'react-router-dom';
-import Update_profile from './../Updateprofile/Update_profile.js';
+//import Update_profile from './../Updateprofile/Update_profile.js';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import IndividualQuestion from '../ReactLandingpage/individualquestion.js';
 import Dialog from 'material-ui/Dialog';
@@ -134,7 +134,7 @@ class Navbar extends React.Component {
           }
           else{
             answers = answers.map((row,index)=> {
-             return <IndividualQuestion answer={row.answer} answered_by={row.answered_by} likes={row.likes} dislikes={row.dislikes} key = {index}/>
+             return <IndividualQuestion answer={row.answer} answered_by={row.answered_by} likes={row.likes} dislikes={row.dislikes} timestamp={row.time} key = {index}/>
            });
          }
          that.setState({answers : answers});
