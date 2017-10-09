@@ -1,6 +1,9 @@
 import React  from 'react';
 import Moment from 'react-moment';
 import {Link,Redirect} from 'react-router-dom';
+const ReactToastr = require('react-toastr');
+const {ToastContainer} = ReactToastr;
+const ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage.animation);
 import {
   Table,
   TableBody,
@@ -77,7 +80,7 @@ export default class Question extends React.Component {
         displayAnswerCount:true,
         postButton:false,
         followBtn:true,
-        button:false,followups:this.props.followCount,
+        button:false,followups:"this.props.followCount",
       };
 
     }
@@ -188,6 +191,15 @@ export default class Question extends React.Component {
       }
       })
   }
+  checkForSuccessAlert() {
+    this.refs.asd.success(
+      'success message alert',
+    '', {
+      timeOut: 3000,
+      extendedTimeOut: 3000
+        }
+ );
+}
   unFollowQuestion(){
     var that = this;
     var qid = this.props.qid;
@@ -198,7 +210,7 @@ export default class Question extends React.Component {
       data:{user:cookies.get('emailId')},
       success:function(data){
           that.setState({followBtn:true,followups:that.props.followCount-1});
-          alert("unFollow success");
+          that.checkForSuccessAlert();
       },
       error:function(err){
           alert(err);
@@ -216,6 +228,9 @@ export default class Question extends React.Component {
         ];
     return(
       <div>
+        <ToastContainer ref='asd'
+          toastMessageFactory={ToastMessageFactory}
+          className='toast-top-center' style={{marginTop:'40%'}}/>
       <Paper  zDepth={5} style={styles.paper}>
       <Table >
         <TableBody displayRowCheckbox={false}>
