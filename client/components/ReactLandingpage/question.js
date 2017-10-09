@@ -264,12 +264,12 @@ export default class Question extends React.Component {
             </TableRowColumn>
             <TableRowColumn colSpan="2" >
               <h1>{this.state.button}</h1>
-              {this.state.button?(this.state.followBtn?<RaisedButton  primary={true} style={styles.followBtn} onClick={this.followQuestion.bind(this)}>
+           {this.state.button?(this.state.followBtn?<RaisedButton  primary={true} style={styles.followBtn} onClick={this.followQuestion.bind(this)}>
                  Follow
               </RaisedButton>:
               <RaisedButton  primary={true} style={styles.followBtn} onClick={this.unFollowQuestion.bind(this)}>
                  Unfollow
-              </RaisedButton>):''}
+              </RaisedButton>):''} 
             </TableRowColumn>
           {/* <TableRowColumn colSpan="2" style={styles.col2}><a onClick={this.postAnswer.bind(this)}>Post your answer</a>
             <Dialog

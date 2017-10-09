@@ -72,7 +72,7 @@ export default class Postanswer extends React.Component {
                 <label for="exampleTextarea">Answer</label>
                 <textarea className="form-control" id="exampleTextarea" rows="13" onChange={this.answerChange.bind(this)}></textarea>
               </div>
-              <RaisedButton  primary={true} style={styles.submitbtn} disabled={this.state.buttonStatus} onClick={this.postAnswer.bind(this)}>Post your answer</RaisedButton>
+              {this.state.token ? <RaisedButton  primary={true} style={styles.submitbtn} disabled={this.state.buttonStatus} onClick={this.postAnswer.bind(this)}>Post your answer</RaisedButton> :  <center><b>Signin/Signup to continue</b></center> }
             </div>:<center><b><div>SignUp/SignIn to continue.....</div></b></center>}
           </div>
       )};
