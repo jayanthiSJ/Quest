@@ -80,7 +80,7 @@ export default class Question extends React.Component {
         displayAnswerCount:true,
         postButton:false,
         followBtn:true,
-        button:false,followups:"this.props.followCount",
+        button:false,followups:this.props.followCount,
       };
 
     }
@@ -269,7 +269,7 @@ export default class Question extends React.Component {
               </RaisedButton>:
               <RaisedButton  primary={true} style={styles.followBtn} onClick={this.unFollowQuestion.bind(this)}>
                  Unfollow
-              </RaisedButton>):''} 
+              </RaisedButton>):''}
             </TableRowColumn>
           {/* <TableRowColumn colSpan="2" style={styles.col2}><a onClick={this.postAnswer.bind(this)}>Post your answer</a>
             <Dialog
