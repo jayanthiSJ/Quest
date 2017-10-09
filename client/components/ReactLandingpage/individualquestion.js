@@ -14,16 +14,16 @@ const styles = {
     margin:'2%',
     textAlign:'justify',
     padding:'2%',
-    fontFamily: 'Times New Roman',
+    fontFamily: 'Roboto',
     borderColor:'black'
   },
   cardtext:{
-    fontFamily: 'Times New Roman',
+    fontFamily: 'Roboto',
     fontSize:'120%',
     textAlign:'justify'
   },
   cardtext1:{
-    fontFamily: 'Times New Roman',
+    fontFamily: 'Roboto',
     fontSize:'100%',
   }
 }

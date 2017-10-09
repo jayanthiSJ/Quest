@@ -29,13 +29,13 @@ const styles = {
     marginTop:'-3%',
     marginLeft:'0%',
     width:'100%',
-    fontFamily: 'Times New Roman',
+    fontFamily: 'Roboto',
     paddingTop: '5%'
   },
 
   tabBtn:{
     backgroundColor:grey900,
-    fontFamily: 'Times New Roman',
+    fontFamily: 'Roboto',
     borderColor:'white',
     border:'3px solid'
   },
@@ -56,7 +56,8 @@ class Questiontabs extends React.Component {
         unansweredquestions:'',
         topansweredquestions:'',
         token: null,
-        logStatus:false
+        logStatus:false,
+        followCount:''
       };
     }
 
@@ -82,6 +83,7 @@ class Questiontabs extends React.Component {
              alert(err);
            }
          });
+
     }
 
     handleChange(value){
@@ -175,8 +177,9 @@ render(){
           value={this.state.slideIndex}
           style={styles.tab}
         >
-          <Tab style={styles.tabBtn} label="Top Questions" value={0} onActive={this.getTopQuestions.bind(this)} />
-          <Tab style={styles.tabBtn} label="Latest" value={1} onActive={this.getLatestQuestions.bind(this)}/>
+
+          <Tab style={styles.tabBtn}  icon={<i className="material-icons md-48">trending_up</i>} label="Top Questions" value={0} onActive={this.getTopQuestions.bind(this)} />
+          <Tab style={styles.tabBtn} icon={<i className="material-icons md-48">trending_up</i>} label="Latest" value={1} onActive={this.getLatestQuestions.bind(this)}/>
           <Tab style={styles.tabBtn} label="Top Answered" value={2} onActive={this.getTopAnsweredQuestions.bind(this)}/>
           <Tab style={styles.tabBtn} label="Unanswered" value={3} onActive={this.getUnAnsweredQuestions.bind(this)}/>
           <Tab style={styles.tabBtn} label="Ask questions" value={4} />
@@ -186,7 +189,7 @@ render(){
         <SwipeableViews
           index={this.state.slideIndex}
           onChangeIndex={this.handleChange.bind(this)}
-          style={{width: '100%',height: '100%',textAlign: 'center',marginTop:'3%',fontFamily: 'Times New Roman'}}
+          style={{width: '100%',height: '100%',textAlign: 'center',marginTop:'3%',fontFamily: 'Roboto'}}
         >
           <div style={styles.slide}>
             {this.state.topratedquestions}

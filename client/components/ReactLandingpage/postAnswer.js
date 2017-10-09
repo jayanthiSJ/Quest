@@ -10,7 +10,7 @@ const cookies = new Cookies();
 const styles = {
   submitbtn:{
     width:'50%',
-    fontFamily: 'Times New Roman',
+    fontFamily: 'Roboto',
     marginLeft:'25%'
   }
 };

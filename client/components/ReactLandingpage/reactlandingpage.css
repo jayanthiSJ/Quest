@@ -31,7 +31,7 @@
 .username{
   margin-top: 15%;
   font-size: 125%;
-  font-family: 'Times New Roman';
+  font-family: 'Roboto';
 }
 
 .profileImg{
@@ -44,14 +44,14 @@
 .navbar{
   position:fixed;
   margin-top:0%;
-  font-family: 'Times New Roman';
+  font-family: 'Roboto';
 }
 
 
 .dropdown-menu{
   position: absolute;
   margin-right:-15%;
-  font-family: 'Times New Roman';
+  font-family: 'Roboto';
 }
 
 .questionAnswer{
@@ -86,12 +86,12 @@
   margin:1%;
   font-weight: bold;
   font-size: 180%;
-  font-family: 'Times New Roman';
+  font-family: 'Roboto';
 }
 
 .answers{
   font-size: 180%;
-  font-family: 'Times New Roman';
+  font-family: 'Roboto';
 }
 .text{
   margin-top:5%;
@@ -99,24 +99,24 @@
   margin-left:5%;
   padding-right:5%;
   padding-left:5%;
-  font-Family: 'Times New Roman';
+  font-Family: 'Roboto';
 }
 .youranswer{
   text-align: center;
   font-size: 130%;
   font-weight: bold;
   margin:3%;
-  font-Family: 'Times New Roman';
+  font-Family: 'Roboto';
 }
 
 .question{
-  font-Family: 'Times New Roman';
+  font-Family: 'Roboto';
   font-size:190%;
   text-decoration: none;
 }
 
 .individualquestion{
-  font-Family: 'Times New Roman';
+  font-Family: 'Roboto';
   font-size:90%;
   text-decoration: none;
 }

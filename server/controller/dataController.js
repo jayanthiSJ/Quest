@@ -110,6 +110,7 @@ module.exports = {
                                      return n,follow_count,qid,postedBy,count(a) as answer_count,n.asked_at as time order by follow_count desc'
       session.run(query).then(function(data) {
         var result = data.records.map((row, index) => {
+          console.log(row._fields[1].low);
           return ({
             question: row._fields[0].properties.value,
             followcount: row._fields[1].low,
@@ -123,11 +124,12 @@ module.exports = {
       });
     } else if (req.params.name == 'latestquestions') {
       let query = `match (n:Question)-[:posted_by]->(u:User)\
-                   with n,u as postedBy ,id(n) as qid optional match (n)-[f:follows]->(u:User)\
+                   with n,u as postedBy ,id(n) as qid optional match (n)<-[f:follows]-(:User)\
                    with n,count(f) as follow_count,qid,postedBy optional match (n)<-[a:answer_of]-(:Answer)\
                    return n,follow_count,qid,postedBy,count(a) as answer_count,n.asked_at as time order by time desc`;
       session.run(query).then(function(data) {
         var result = data.records.map((row, index) => {
+          console.log("followcount"+row._fields[1].low);
           return ({
             question: row._fields[0].properties.value,
             followcount: row._fields[1].low,

@@ -33,7 +33,7 @@ const styles = {
     padding: '20px',
     borderTopLeftRadius:'30%',
     borderBottomRightRadius:'30%',
-    fontFamily: 'Times New Roman'
+    fontFamily: 'Roboto'
   },
   frontcardmedia:{
     width:'60%',
@@ -179,7 +179,7 @@ class Landingpage extends React.Component {
                      </Card>
                   </div>
                   <div className="back">
-                     <Card style={{backgroundColor:data.color,width: '90%',height: '80%',textAlign: 'center',margin:'2%',fontFamily: 'Times New Roman',borderBottomLeftRadius:'20%',borderTopRightRadius:'20%'}}>
+                     <Card style={{backgroundColor:data.color,width: '90%',height: '80%',textAlign: 'center',margin:'2%',fontFamily: 'Roboto',borderBottomLeftRadius:'20%',borderTopRightRadius:'20%'}}>
                         <CardHeader
                            avatar={<Avatar style={styles.avatar} src={data.img}/>}
                            title={<CardText style={styles.backcardheader}>{data.title}</CardText>}
@@ -198,13 +198,7 @@ class Landingpage extends React.Component {
        ))}
       </div>
    </div>}
-   <div className="copyright">
-    <center>
-      <p>
-         <b>
-            <i>
-      Copyright © 2017. All Rights Reserved.</i></b></p></center>
-   </div>
+   
 </div>
 
 )};

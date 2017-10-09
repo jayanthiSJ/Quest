@@ -27,7 +27,7 @@ const styles = {
   col1:{
     textAlign: 'center',
     whiteSpace:'inherit',
-    fontFamily: 'Times New Roman',
+    fontFamily: 'Roboto !important',
     fontSize:'120%'
   },
   col2:{
@@ -35,12 +35,12 @@ const styles = {
     border:'10px solid',
     borderColor:'white',
     whiteSpace:'inherit',
-    fontFamily: 'Times New Roman',
+    fontFamily: 'Roboto',
     fontSize:'120%'
   },
   col3:{
     whiteSpace:'inherit',
-    fontFamily: 'Times New Roman',
+    fontFamily: 'Roboto',
     fontSize:'120%',
     textAlign:'right'
   },
@@ -49,12 +49,12 @@ const styles = {
   },
   submitbtn:{
     width:'50%',
-    fontFamily: 'Times New Roman',
+    fontFamily: 'Roboto',
     marginLeft:'25%'
   },
   paper:{
-    borderColor:'black',
-    border:'2px solid',
+
+
     width:'80%',
     marginLeft:'10%',
     marginTop:'2%',
@@ -68,7 +68,7 @@ export default class Question extends React.Component {
   constructor(props) {
       super(props);
       this.state = {
-        vote:'votes',
+        follower:'followers',
         answer:'answers',
         answers:'',
         dialog:'',
@@ -77,23 +77,22 @@ export default class Question extends React.Component {
         displayAnswerCount:true,
         postButton:false,
         followBtn:true,
-        button:false
+        button:false,followups:this.props.followCount,
       };
 
     }
     componentWillMount(){
     if((this.props.followCount)<=1){
-      this.setState({vote:'vote'});
+      this.setState({follower:'follower'});
     }
     if((this.props.answerCount)<=1){
       this.setState({answer:'answer'});
     }
-    if(user == undefined){
-      this.setState({buttonStatus:true});
-    }
+
     else{
-      this.setState({buttonStatus:false});
+      this.setState({followups:this.props.followCount});
     }
+
 
     if(this.props.name == "unanswered"){
       this.setState({displayAnswerCount:false});
@@ -108,7 +107,7 @@ export default class Question extends React.Component {
       alert("user:"+this.state.button);
       this.setState({button:true});
     }
-    
+
     var that = this;
     alert(user);
     $.ajax({
@@ -130,6 +129,7 @@ export default class Question extends React.Component {
         alert("error");
       }
     })
+
   }
 
   postAnswer(){
@@ -174,12 +174,13 @@ export default class Question extends React.Component {
   followQuestion(){
     var that = this;
     var qid = this.props.qid;
+    var followup=that.props.followCount;
     $.ajax({
       type:'POST',
       url:'/followQuestion/'+qid,
       data:{user:cookies.get('emailId')},
       success:function(data){
-          that.setState({followBtn:false});
+          that.setState({followBtn:false,followups:that.props.followCount});
           alert("follow success");
       },
       error:function(err){
@@ -190,12 +191,13 @@ export default class Question extends React.Component {
   unFollowQuestion(){
     var that = this;
     var qid = this.props.qid;
+    var unfollowdown=that.props.followCount-1;
     $.ajax({
       type:'POST',
       url:'/unFollowQuestion/'+qid,
       data:{user:cookies.get('emailId')},
       success:function(data){
-          that.setState({followBtn:true});
+          that.setState({followBtn:true,followups:that.props.followCount-1});
           alert("unFollow success");
       },
       error:function(err){
@@ -204,7 +206,9 @@ export default class Question extends React.Component {
     });
   }
 
+
   render(){
+    console.log(this.props.followCount+"!!!!!!!!!!!!!!!");
     const actions = [
           <FloatingActionButton mini={true} onClick={this.handleClose.bind(this)} style={{align:'center'}}>
             <i className="material-icons">close</i>
@@ -216,7 +220,7 @@ export default class Question extends React.Component {
       <Table >
         <TableBody displayRowCheckbox={false}>
           <TableRow >
-            <TableRowColumn colSpan="2" style={styles.col1}>{this.props.followCount} {this.state.vote}</TableRowColumn>
+            <TableRowColumn colSpan="2" style={styles.col1}>{this.state.followups} {this.state.follower}</TableRowColumn>
             {this.state.displayAnswerCount?<TableRowColumn colSpan="2" style={styles.col2}>{this.props.answerCount} {this.state.answer}</TableRowColumn>:''}
             <TableRowColumn colSpan="4" >
               <a className="question" onClick={this.fetchAnswer.bind(this)}><p>{this.props.question+'?'}</p></a>

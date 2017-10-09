@@ -152,6 +152,7 @@ class Navbar extends React.Component {
                    url:'/users/logOut',
                    type:'GET',
                    success:function(data){
+                     console.log(data);
                        that.setState({logStatus:false,logout:true});
                        localStorage.removeItem('token');
                    },
