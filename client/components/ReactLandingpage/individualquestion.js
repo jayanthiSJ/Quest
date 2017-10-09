@@ -97,9 +97,9 @@ render(){
             </Row>
             <Row center='xs sm md lg'>
               <Col start xs={1} sm={1} md={1} className="voteBtn">
-                <FloatingActionButton  mini={true}  onClick={this.like.bind(this)}>
+                {this.state.token && <FloatingActionButton  mini={true}  onClick={this.like.bind(this)}>
                   <i className="material-icons">thumb_up</i>
-                </FloatingActionButton>
+                </FloatingActionButton> }
               </Col>
               <Col start xs={1} sm={1} md={1} className="voteCnt">
                   {this.state.like}
@@ -107,7 +107,7 @@ render(){
               <Col start='xs sm md lg' xs={1} sm={1} md={1} className="voteBtn">
                 <FloatingActionButton  mini={true}  onClick={this.dislike.bind(this)}>
                   <i className="material-icons">thumb_down</i>
-                </FloatingActionButton>
+                </FloatingActionButton> 
               </Col>
               <Col start xs={1} sm={1} md={1} className="voteCnt">
                   {this.state.dislike}
