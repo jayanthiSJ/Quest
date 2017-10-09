@@ -63,10 +63,10 @@ class Questiontabs extends React.Component {
     componentWillMount(){
       var that=this;
       let token = localStorage.getItem('token');
-      alert(user);
-      if(user != ''){
-        that.setState({logStatus:true});
-      }
+      // alert(user);
+      // if(user != ''){
+      //   that.setState({logStatus:true});
+      // }
       var name = 'topquestions';
          $.ajax({
            type:'GET',
@@ -128,6 +128,26 @@ class Questiontabs extends React.Component {
         });
           }
 
+          getUserQuestions(){
+            var that=this;
+            var name = 'userquestions';
+            console.log("@@@@@"+cookies.get('emailId'));
+               $.ajax({
+                 type:'GET',
+                 url:'/question/'+name,
+                 data:{user:cookies.get('emailId')},
+                  success:function(data){
+                    var  userQuestions = data.map((row,index)=> {
+                   return <Question name="userquestions" question = {row.question} followCount={row.followcount} postedBy={row.postedBy} timestamp={row.time} answerCount={row.answercount} qid={row.questionid}  key = {index}/>
+                 });
+                 that.setState({userquestions : userQuestions});
+               },
+               error:function(err){
+                 alert(err);
+               }
+         });
+           }
+
           getTopAnsweredQuestions(){
             var that=this;
             var name = 'topAnswered';
@@ -177,9 +197,10 @@ render(){
         >
           <Tab style={styles.tabBtn} label="Top Questions" value={0} onActive={this.getTopQuestions.bind(this)} />
           <Tab style={styles.tabBtn} label="Latest" value={1} onActive={this.getLatestQuestions.bind(this)}/>
-          <Tab style={styles.tabBtn} label="Top Answered" value={2} onActive={this.getTopAnsweredQuestions.bind(this)}/>
-          <Tab style={styles.tabBtn} label="Unanswered" value={3} onActive={this.getUnAnsweredQuestions.bind(this)}/>
-          <Tab style={styles.tabBtn} label="Ask questions" value={4} />
+          {this.state.token && <Tab style={styles.tabBtn} label="Your Questions" value={2} onActive={this.getUserQuestions.bind(this)}/>}
+          <Tab style={styles.tabBtn} label="Top Answered" value={3} onActive={this.getTopAnsweredQuestions.bind(this)}/>
+          <Tab style={styles.tabBtn} label="Unanswered" value={4} onActive={this.getUnAnsweredQuestions.bind(this)}/>
+          <Tab style={styles.tabBtn} label="Ask questions" value={5} />
           </Tabs>
 
 
@@ -194,6 +215,9 @@ render(){
           <div style={styles.slide}>
             {this.state.latestquestions}
           </div>
+        <div style={styles.slide}>
+            {this.state.userquestions}
+          </div>
           <div style={styles.slide}>
             {this.state.topansweredquestions}
           </div>
@@ -201,7 +225,7 @@ render(){
             {this.state.unansweredquestions}
           </div>
           <div style={styles.slide}>
-            {(this.state.logStatus) ? <Editor/> : <center><b>Signin/Signup to continue</b></center>}
+            { this.state.token ? <Editor/> : <center><b>Signin/Signup to continue</b></center>}
           </div>
         </SwipeableViews>
 

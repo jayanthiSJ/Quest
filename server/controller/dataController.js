@@ -14,9 +14,10 @@ module.exports = {
     const oldString = searchValue.split(' ');
     const keyword = sw.removeStopwords(oldString);
     console.log(keyword);
-    let intent = [];
+    let intents = [];
 
     for (let i = 0; i < oldString.length; i = i + 1) {
+      let intent = [];
       for (let m = 0; m < intentLexicon.length; m = m + 1) {
         let splitIntent = intentLexicon[m].split(' ');
         if (splitIntent[0] === oldString[i]) {
@@ -33,13 +34,19 @@ module.exports = {
           }
         }
       }
+      if (intent.length !== 0) {
+           i = i + intent.length - 1;
+           intents.push(intent.join(' '));
+           // if intent found skip this iteration
+           continue;
+         }
     }
     const params = {
       "keywords": keyword,
-      "intent": intent
+      "intent": intents
     }
-    console.log(intent);
-    let query = `unwind ${JSON.stringify(intent)} as ques_intent\
+    console.log(intents);
+    let query = `unwind ${JSON.stringify(params.intent)} as ques_intent\
                 match (:QuestionIntent{value:ques_intent})-[:same_as]->(baseintent:QuestionIntent) with distinct collect(baseintent.value) as intent\
                 MATCH (k:Keywords)<-[:Question_of]-(q:Question)-[:intent]->(i:QuestionIntent)\
                 where k.name in {keywords} and i.value in intent\
@@ -140,6 +147,25 @@ module.exports = {
         console.log(result);
         res.send(result);
       });
+    } else if (req.params.name == 'userquestions') {
+        var user = req.query.user;
+      let query = `match (n:Question)-[:posted_by]->(u:User{name:"${user}"})\
+                   with n,u as postedBy ,id(n) as qid optional match (n)-[f:follows]->(u:User)\
+                   with n,count(f) as follow_count,qid,postedBy optional match (n)<-[a:answer_of]-(:Answer)\
+                   return n,follow_count,qid,postedBy,count(a) as answer_count,n.asked_at as time order by time desc`;
+      session.run(query).then(function(data) {
+        var result = data.records.map((row, index) => {
+          return ({
+            question: row._fields[0].properties.value,
+            followcount: row._fields[1].low,
+            questionid: row._fields[2].low,
+            postedBy: row._fields[3].properties.name,
+            answercount: row._fields[4].low,
+            time:row._fields[5]
+          });
+        });
+        res.send(result);
+      });
     } else if (req.params.name == 'topAnswered') {
       let query = `match (q:Question)<-[c:answer_of]-(a:Answer)<-[r:likes]-(:User)\
                    with q,count(r) as likes,count(c) as answer_count,id(q) as qid optional match (q)-[:posted_by]->(u:User)\
@@ -186,9 +212,10 @@ module.exports = {
     var searchValue = req.body.searchValue;
     const oldString = searchValue.split(' ');
     const keyword = sw.removeStopwords(oldString);
-    let intent = [];
+    let intents = [];
 
     for (let i = 0; i < oldString.length; i = i + 1) {
+      let intent = [];
       for (let m = 0; m < intentLexicon.length; m = m + 1) {
         let splitIntent = intentLexicon[m].split(' ');
         if (splitIntent[0] === oldString[i]) {
@@ -205,13 +232,19 @@ module.exports = {
           }
         }
       }
+      if (intent.length !== 0) {
+           i = i + intent.length - 1;
+           intents.push(intent.join(' '));
+           // if intent found skip this iteration
+           continue;
+         }
     }
     const params = {
       "keywords": keyword,
-      "intent": intent
+      "intent": intents
     }
-
-    let query = `unwind ${JSON.stringify(intent)} as ques_intent\
+  console.log(intents);
+    let query = `unwind ${JSON.stringify(params.intent)} as ques_intent\
                                     match (:QuestionIntent{value:ques_intent})-[:same_as]->(baseintent:QuestionIntent) with distinct collect(baseintent.value) as intent\
                                     MATCH (k:Keywords)<-[:Question_of]-(q:Question)-[:intent]->(i:QuestionIntent), (q)<-[:answer_of]-(a:Answer)-[:answered_by]->(u:User)\
                                   where k.name in {keywords} and i.value in intent\
