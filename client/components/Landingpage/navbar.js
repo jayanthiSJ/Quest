@@ -159,6 +159,7 @@ class Navbar extends React.Component {
                    success:function(data){
                        that.setState({logStatus:false,logout:true});
                        cookies.remove('displayname');
+                        cookies.remove('emailId');
                        localStorage.removeItem('token');
                    },
                    error:function(err){

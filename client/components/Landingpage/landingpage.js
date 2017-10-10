@@ -2,6 +2,7 @@ import React from 'react';
 import {Card, CardActions, CardTitle, CardText,CardMedia,CardHeader} from 'material-ui/Card';
 import Avatar from 'material-ui/Avatar';
 import {Redirect} from 'react-router-dom';
+let {hashHistory} = require('react-router');
 import {List, ListItem} from 'material-ui/List';
 import {indigo200,blue200,lightBlue200,cyan200,lightBlue400,blue400,tealA200} from 'material-ui/styles/colors.js';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -87,7 +88,7 @@ class Landingpage extends React.Component {
     super();
     this.state = {
       username:'',
-      visitSite:false,
+      visitSite:'',
       loginStatus:false,
       react:'React is a declarative, efficient, and flexible JavaScript library for building user interfaces.',
       colorReact : indigo200,
@@ -107,11 +108,13 @@ class Landingpage extends React.Component {
 
   visitSite()
  {
-     this.setState({visitSite:true});
+    this.setState({visitSite:<Redirect to="/home"/>});
+     //hashHistory.push('/home');
   }
 
 
   render(){
+    console.log("ddsf");
     const cardData = [
       {
         img: Reactimg,
@@ -163,7 +166,6 @@ class Landingpage extends React.Component {
    <Navbar/>
  </div>
    <hr/>
-   {this.state.visitSite?<Tabs/>:
    <div className="bg-image container-fluid">
       <div className="row cards">
          {cardData.map((data,index) => (
@@ -188,7 +190,6 @@ class Landingpage extends React.Component {
                           {<CardText style={styles.backcardtitle} >
                              {data.definition}</CardText>}
                         </CardActions>
-
                         <RaisedButton  style={styles.raisedbtn} disabled={data.disable} secondary={true} onClick={this.visitSite.bind(this)}>Visit site</RaisedButton>
                      </Card>
                   </div>
@@ -197,8 +198,8 @@ class Landingpage extends React.Component {
          </div>
        ))}
       </div>
-   </div>}
-   
+   </div>
+{this.state.visitSite}
 </div>
 
 )};

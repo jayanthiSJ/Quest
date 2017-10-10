@@ -21,6 +21,10 @@
   margin-bottom: 0px;
 }
 
+.tabs{
+  margin-top: 2%;
+}
+
 .input-group{
   align:center;
   width:130%;
@@ -111,8 +115,17 @@
 
 .question{
   font-Family: 'Roboto';
-  font-size:190%;
-  text-decoration: none;
+  font-size:170%;
+  font-weight: bold;
+  color:black;
+  width: 11em;
+  word-wrap: break-word  !important;
+}
+
+a:hover{
+  color:black;
+  cursor:pointer;
+  
 }
 
 .individualquestion{

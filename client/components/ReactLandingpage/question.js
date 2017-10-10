@@ -15,11 +15,16 @@ import {
 import Paper from 'material-ui/Paper';
 import Dialog from 'material-ui/Dialog';
 import {Row,Col} from 'react-flexbox-grid';
+import Badge from 'material-ui/Badge';
+import IconButton from 'material-ui/IconButton';
+import Chip from 'material-ui/Chip';
+import Avatar from 'material-ui/Avatar';
+// import Tooltip from 'material-ui/Tooltip';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import Divider from 'material-ui/Divider';
-import {grey900,indigo200,tealA700} from 'material-ui/styles/colors.js';
+import {grey900,indigo900,tealA700,blue300,cyan500,grey50} from 'material-ui/styles/colors.js';
 import IndividualQuestion from './individualquestion.js';
 import Postanswer from './postAnswer.js';
 import './reactlandingpage.css';
@@ -31,25 +36,27 @@ const styles = {
     textAlign: 'center',
     whiteSpace:'inherit',
     fontFamily: 'Roboto !important',
-    fontSize:'120%'
+    fontSize:'120%',
+    color:'grey',
   },
   col2:{
     textAlign: 'center',
-    border:'10px solid',
-    borderColor:'white',
     whiteSpace:'inherit',
     fontFamily: 'Roboto',
-    fontSize:'120%'
+    fontSize:'120%',
+    color:'grey'
   },
   col3:{
     whiteSpace:'inherit',
     fontFamily: 'Roboto',
-    fontSize:'120%',
-    textAlign:'right'
+    fontSize:'110%',
+    textAlign:'right',
+    color:'grey'
   },
   followBtn:{
     marginLeft:'10%',
-    backgroundColor:tealA700
+    backgroundColor:tealA700,
+    color:'grey'
   },
   submitbtn:{
     width:'50%',
@@ -62,6 +69,10 @@ const styles = {
     marginTop:'2%',
     marginBottom:'2%',
     marginRight:'10%'
+  },
+  badge:{
+    marginTop:'5%',
+    padding: '14px 14px 4px 4px'
   }
 };
 
@@ -82,7 +93,8 @@ export default class Question extends React.Component {
         followBtn:true,
         button:false,followups:this.props.followCount,
         displayAnswer:false,
-        user:null
+        user:null,
+        firstletter:''
       };
 
     }
@@ -111,6 +123,10 @@ export default class Question extends React.Component {
     else{
       this.setState({button:true});
     }
+
+    var avatar = this.props.postedBy;
+    var image = avatar.substring(0,1);
+    this.setState({firstletter:image});
 
     var that = this;
     $.ajax({
@@ -221,7 +237,6 @@ export default class Question extends React.Component {
 
 
   render(){
-    console.log(this.props.followCount+"!!!!!!!!!!!!!!!");
     const actions = [
           <FloatingActionButton mini={true} onClick={this.handleClose.bind(this)} style={{align:'center'}}>
             <i className="material-icons">close</i>
@@ -233,36 +248,68 @@ export default class Question extends React.Component {
           toastMessageFactory={ToastMessageFactory}
           className='toast-top-center' style={{marginTop:'40%'}}/>
     <Paper  zDepth={5} style={styles.paper}>
-      <Table >
-        <TableBody displayRowCheckbox={false}>
+      <Table style={{marginTop:'1%',marginBottom:'1%',}}>
+        <TableBody displayRowCheckbox={false} style={{paddingTop:'5%'}}>
           <TableRow >
-            <TableRowColumn colSpan="2" style={styles.col1}>{this.state.followups} {this.state.follower}</TableRowColumn>
-            {this.state.displayAnswerCount?<TableRowColumn colSpan="2" style={styles.col2}>{this.props.answerCount} {this.state.answer}</TableRowColumn>:''}
-            <TableRowColumn colSpan="4" >
-              <a className="question" onClick={this.fetchAnswer.bind(this)}><p>{this.props.question+'?'}</p></a>
-              <Dialog
-                  actions={actions}
-                  modal={false}
-                  open={this.state.openAnswer}
-                  autoDetectWindowHeight={true}
-	                autoScrollBodyContent={true}
-	                repositionOnUpdate={true}
-                  onRequestClose={this.handleClose.bind(this)}
+          <TableRowColumn style={{width:'100%'}}>
+            <a className="question" onClick={this.fetchAnswer.bind(this)}><p>{this.props.question+'?'}</p></a>
+            <Dialog
+                actions={actions}
+                modal={false}
+                open={this.state.openAnswer}
+                autoDetectWindowHeight={true}
+                autoScrollBodyContent={true}
+                repositionOnUpdate={true}
+                onRequestClose={this.handleClose.bind(this)}
+              >
+                <h1><center><b><p className="individualquestion">{this.props.question}?</p></b></center></h1>
+                {this.state.answers}
+                {this.state.postButton?<Postanswer qid={this.props.qid}/>:''}
+              </Dialog>
+
+
+            <TableRowColumn colSpan="1" style={styles.col2}>
+            <IconButton tooltip="Answers" onClick={this.postAnswer.bind(this)}>
+            <i className="material-icons" style={{marginTop:'5%',cursor:'pointer'}} >create</i>
+              </IconButton>
+            </TableRowColumn>
+
+            <TableRowColumn colSpan="1" style={styles.col1} >
+              <Badge
+                  badgeContent={this.state.followups}
+                  primary={true}
+                  style={styles.badge}
                 >
-                  <h1><center><b><p className="individualquestion">{this.props.question}?</p></b></center></h1>
-                  {this.state.answers}
-                  {this.state.postButton?<Postanswer qid={this.props.qid}/>:''}
-                </Dialog>
-              <TableRowColumn colSpan="3" style={styles.col3}>-asked  <Moment fromNow>{(this.props.timestamp).toString()}</Moment>   by  <a href="">{this.props.postedBy}</a></TableRowColumn>
-            </TableRowColumn>
-            <TableRowColumn colSpan="2" >
-           {this.state.button?(this.state.followBtn?<RaisedButton  primary={true} style={styles.followBtn} onClick={this.followQuestion.bind(this)}>
-                 Follow
-              </RaisedButton>:
-              <RaisedButton  primary={true} style={styles.followBtn} onClick={this.unFollowQuestion.bind(this)}>
-                 Unfollow
-              </RaisedButton>):''}
-            </TableRowColumn>
+                <IconButton tooltip="Followers">
+                  <i className="material-icons md-48">people</i>
+                  </IconButton>
+
+                </Badge>
+                 </TableRowColumn>
+
+
+
+              <TableRowColumn colSpan="2" >
+             {this.state.button?(this.state.followBtn?<RaisedButton  primary={true} style={styles.followBtn} onClick={this.followQuestion.bind(this)}>
+                   Follow
+                </RaisedButton>:
+                <RaisedButton  primary={true} style={styles.followBtn} onClick={this.unFollowQuestion.bind(this)}>
+                   Unfollow
+                </RaisedButton>):''}
+              </TableRowColumn>
+
+              <TableRowColumn colSpan="6" style={styles.col3}>-asked  <Moment fromNow>{(this.props.timestamp).toString()}</Moment>   by
+                <Chip
+                >
+                  <Avatar size={32} color={grey50} backgroundColor={grey900}>
+                  {this.state.firstletter}
+                  </Avatar>
+                  {this.props.postedBy}
+                </Chip>
+              </TableRowColumn>
+          </TableRowColumn>
+
+
           {/* <TableRowColumn colSpan="2" style={styles.col2}><a onClick={this.postAnswer.bind(this)}>Post your answer</a>
             <Dialog
                 actions={actions}

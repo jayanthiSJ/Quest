@@ -1,7 +1,7 @@
 import React from 'react';
 import $ from 'jquery';
 import {Tabs, Tab} from 'material-ui/Tabs';
-import {grey900,indigo200,blue800,cyan800,teal500,tealA200} from 'material-ui/styles/colors.js';
+import {grey900,indigo200,blue800,cyan800,teal500,tealA200,cyanA700} from 'material-ui/styles/colors.js';
 // From https://github.com/oliviertassinari/react-swipeable-views
 import SwipeableViews from 'react-swipeable-views';
 import Defaultimg from './../../images/default_profile.jpg';
@@ -30,12 +30,7 @@ const styles = {
   },
 
   tabBtn:{
-    backgroundColor:teal500,
     fontFamily: 'Roboto',
-    borderColor:'white',
-    border:'3px solid',
-    borderTopLeftRadius:'45%',
-    borderBottomRightRadius:'25%',
     marginLeft:'3%'
   },
 
@@ -204,7 +199,7 @@ render(){
 
           <Tab style={styles.tabBtn}  icon={<i className="material-icons md-56">grade</i>} label="Top Questions" value={0} onActive={this.getTopQuestions.bind(this)} />
           <Tab style={styles.tabBtn} icon={<i className="material-icons md-56">trending_up</i>} label="Latest" value={1} onActive={this.getLatestQuestions.bind(this)}/>
-          {this.state.token && <Tab style={styles.tabBtn} icon={<i className="material-icons">grade</i>}label="Your Questions" value={2} onActive={this.getUserQuestions.bind(this)}/>}
+          {this.state.token && <Tab style={styles.tabBtn} icon={<i className="material-icons">visibility</i>}label="Your Questions" value={2} onActive={this.getUserQuestions.bind(this)}/>}
           <Tab style={styles.tabBtn} icon={<i className="material-icons md-56">new_releases</i>} label="Unanswered" value={4} onActive={this.getUnAnsweredQuestions.bind(this)}/>
           {/*}<Tab style={styles.tabBtn} label="Ask questions" value={5} />*/}
           </Tabs>
