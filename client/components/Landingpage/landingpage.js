@@ -164,7 +164,7 @@ class Landingpage extends React.Component {
  </div>
    <hr/>
    {this.state.visitSite?<Tabs/>:
-   <div className="bg-image container-fluid">
+   <div className="bg-image  container-fluid">
       <div className="row cards">
          {cardData.map((data,index) => (
          <div className="col-sm-4 domain" key={index}>
@@ -198,7 +198,21 @@ class Landingpage extends React.Component {
        ))}
       </div>
    </div>}
-   
+   <div className="container">
+     <div className="footer-block footer1">
+ <div className="container  copyRights">
+   <ul className="list-inline bullets">
+                       <li><i className="fa fa-facebook faf fa-lg"></i></li>
+                       <li><i className="fa fa-twitter fat fa-lg"></i></li>
+                       <li><i className="fa fa-instagram  fai fa-lg"></i></li>
+                       <li><i className="fa fa-youtube fay fa-lg"></i></li>
+
+                      <p class="pull-right">Copyright 2017 © Quoser Pvt. Ltd.</p>
+                     </ul>
+
+ </div>
+</div>
+   </div>
 </div>
 
 )};

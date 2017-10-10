@@ -7,6 +7,10 @@ import {Card, CardText} from 'material-ui/Card';
 import Moment from 'react-moment';
 import './reactlandingpage.css';
 import Cookies from 'universal-cookie';
+const ReactToastr = require('react-toastr');
+const {ToastContainer} = ReactToastr;
+const ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage.animation);
+
 
 const cookies = new Cookies();
 const styles = {
@@ -39,7 +43,24 @@ class IndividualQuestion extends React.Component {
     };
 
 
-
+    checkForLikeSuccessAlert() {
+        this.refs.asd.error(
+          'Liked successfully',
+        '', {
+          timeOut: 3000,
+          extendedTimeOut: 3000
+            }
+      );
+      }
+      checkForLikeFailedAlert() {
+          this.refs.asd.error(
+            'Error while liking..!',
+          '', {
+            timeOut: 3000,
+            extendedTimeOut: 3000
+              }
+        );
+        }
 like(){
   var that = this;
   var up=that.props.likes+1;
@@ -51,18 +72,34 @@ like(){
              type:'POST',
              success:function(data)
              {
-               alert("liked successfully");
+               that.checkForLikeSuccessAlert();
              },
              error:function(err)
              {
-               alert(err);
+              that.checkForLikeFailedAlert();
              }
 
 
    });
 
 }
-
+checkForDisLikeSuccessAlert() {
+    this.refs.asd.error(
+      'DisLiked successfully',
+    '', {
+      timeOut: 3000,
+      extendedTimeOut: 3000
+        }
+  );
+}checkForDisLikeErrorAlert() {
+      this.refs.asd.error(
+        'Error while DisLiking ',
+      '', {
+        timeOut: 3000,
+        extendedTimeOut: 3000
+          }
+    );
+    }
 dislike(){
   var that = this;
   var down=that.props.dislike+1;
@@ -74,11 +111,11 @@ dislike(){
             type:'POST',
             success:function(data)
             {
-              alert("disliked successfully");
+              that.checkForDisLikeSuccessAlert();
             },
             error:function(err)
             {
-              alert(err);
+              that.checkForDisLikeErrorAlert();
             }
 
 

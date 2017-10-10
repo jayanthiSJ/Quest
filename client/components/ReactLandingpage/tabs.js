@@ -1,7 +1,7 @@
 import React from 'react';
 import $ from 'jquery';
 import {Tabs, Tab} from 'material-ui/Tabs';
-import {grey900,indigo200,blue800,cyan800,teal500,tealA200} from 'material-ui/styles/colors.js';
+import {grey900,indigo200,cyan800,teal500,tealA200} from 'material-ui/styles/colors.js';
 // From https://github.com/oliviertassinari/react-swipeable-views
 import SwipeableViews from 'react-swipeable-views';
 import Defaultimg from './../../images/default_profile.jpg';
@@ -25,17 +25,13 @@ const styles = {
 
   },
 
-  tab:{
-
-  },
-
   tabBtn:{
     backgroundColor:teal500,
     fontFamily: 'Roboto',
     borderColor:'white',
-    border:'3px solid',
-    borderTopLeftRadius:'45%',
-    borderBottomRightRadius:'25%',
+    //border:'3px solid',
+    //borderTopLeftRadius:'45%',
+    //borderBottomRightRadius:'25%',
     marginLeft:'3%'
   },
 
@@ -213,7 +209,7 @@ render(){
         <SwipeableViews
           index={this.state.slideIndex}
           onChangeIndex={this.handleChange.bind(this)}
-          style={{width: '100%',height: '100%',textAlign: 'center',marginTop:'3%',fontFamily: 'Roboto'}}
+          style={{width: '100%',height: '100%',textAlign: 'center',marginTop:'3%',fontFamily: 'Roboto',backgroundColor:'white'}}
         >
           <div style={styles.slide}>
             {this.state.topratedquestions}

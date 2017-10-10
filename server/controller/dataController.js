@@ -120,17 +120,13 @@ module.exports = {
       session.run(query).then(function(data) {
         var name;
         var result = data.records.map((row, index) => {
-          UserModel.find({'username':row._fields[3].properties.name},function(err,users){
-              if(users){
-                name = users[0].firstname+" "+users[0].lastname;
-              }
-            });
+          
 
           return ({
             question: row._fields[0].properties.value,
             followcount: row._fields[1].low,
             questionid: row._fields[2].low,
-            postedBy: name,
+            postedBy:row._fields[3].properties.name,
             answercount: row._fields[4].low,
             time:row._fields[5]
           });
