@@ -19,7 +19,7 @@ import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import Divider from 'material-ui/Divider';
-import {grey900,indigo200} from 'material-ui/styles/colors.js';
+import {grey900,indigo200,tealA700} from 'material-ui/styles/colors.js';
 import IndividualQuestion from './individualquestion.js';
 import Postanswer from './postAnswer.js';
 import './reactlandingpage.css';
@@ -48,7 +48,8 @@ const styles = {
     textAlign:'right'
   },
   followBtn:{
-    marginLeft:'10%'
+    marginLeft:'10%',
+    backgroundColor:tealA700
   },
   submitbtn:{
     width:'50%',
@@ -56,8 +57,6 @@ const styles = {
     marginLeft:'25%'
   },
   paper:{
-
-
     width:'80%',
     marginLeft:'10%',
     marginTop:'2%',
@@ -74,6 +73,7 @@ export default class Question extends React.Component {
         follower:'followers',
         answer:'answers',
         answers:'',
+        answers1:'',
         dialog:'',
         openAnswer: false,
         buttonStatus:true,
@@ -81,6 +81,8 @@ export default class Question extends React.Component {
         postButton:false,
         followBtn:true,
         button:false,followups:this.props.followCount,
+        displayAnswer:false,
+        user:null
       };
 
     }
@@ -102,17 +104,15 @@ export default class Question extends React.Component {
     }
 
     var user = cookies.get('emailId');
-    if(user == 'undefined'){
+    this.setState({user:user})
+    if(user == null){
       this.setState({button:false});
-      alert("nouser:"+this.state.button);
     }
     else{
-      alert("user:"+this.state.button);
       this.setState({button:true});
     }
 
     var that = this;
-    alert(user);
     $.ajax({
       type:'GET',
       url:'/followStatus',
@@ -152,12 +152,13 @@ export default class Question extends React.Component {
     data:{},
     success:function(answers){
           var answers;
+          var answers1;
           if(answers == 'No answers!!!!!'){
             answers = <Postanswer qid={qid}/>
             that.setState({postButton:false});
           }
           else{
-            that.setState({postButton:true});
+            that.setState({postButton:true,displayAnswer:true});
             answers = answers.map((row,index)=> {
              return <IndividualQuestion answer={row.answer} answered_by={row.answered_by} likes={row.likes} dislikes={row.dislikes} answerid={row.answerId} timestamp={row.time} key = {index}/>
            });
@@ -231,7 +232,7 @@ export default class Question extends React.Component {
         <ToastContainer ref='asd'
           toastMessageFactory={ToastMessageFactory}
           className='toast-top-center' style={{marginTop:'40%'}}/>
-      <Paper  zDepth={5} style={styles.paper}>
+    <Paper  zDepth={5} style={styles.paper}>
       <Table >
         <TableBody displayRowCheckbox={false}>
           <TableRow >
@@ -250,20 +251,11 @@ export default class Question extends React.Component {
                 >
                   <h1><center><b><p className="individualquestion">{this.props.question}?</p></b></center></h1>
                   {this.state.answers}
-                  {this.state.postButton?<Row center='xs sm md lg'>
-                                            <Col xs={4} sm={6} md={12} >
-                                              <RaisedButton
-                                                label="Post your answer"
-                                                primary={true}
-                                                icon={<i className="material-icons">mode_edit</i>}
-                                                onClick={this.postAnswer.bind(this)}/>
-                                            </Col>
-                                          </Row>:''}
+                  {this.state.postButton?<Postanswer qid={this.props.qid}/>:''}
                 </Dialog>
               <TableRowColumn colSpan="3" style={styles.col3}>-asked  <Moment fromNow>{(this.props.timestamp).toString()}</Moment>   by  <a href="">{this.props.postedBy}</a></TableRowColumn>
             </TableRowColumn>
             <TableRowColumn colSpan="2" >
-              <h1>{this.state.button}</h1>
            {this.state.button?(this.state.followBtn?<RaisedButton  primary={true} style={styles.followBtn} onClick={this.followQuestion.bind(this)}>
                  Follow
               </RaisedButton>:
@@ -297,7 +289,7 @@ export default class Question extends React.Component {
           </TableRow>
         </TableBody>
       </Table>
-      </Paper>
+    </Paper>
     </div>
     )};
 }

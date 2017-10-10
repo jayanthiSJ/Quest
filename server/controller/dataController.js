@@ -1,6 +1,7 @@
 let driver = require('../config/neo4j.js');
 let session = driver.session();
 let intentLexicon = require('../lexicon/intentLexicon.json');
+let UserModel = require('../models/signup');
 
 module.exports = {
   addQuestion: function(req, res) {
@@ -111,22 +112,30 @@ module.exports = {
   },
   getQuestions: function(req, res) {
     if (req.params.name == 'topquestions') {
+
       let query = 'match (n:Question)<-[r:follows]-(:User)\
                                      with n,count(r) as follow_count,id(n) as qid optional match (n)-[:posted_by]->(u:User)\
                                      with n,follow_count,qid,u as postedBy optional match (n)<-[a:answer_of]-(:Answer)\
                                      return n,follow_count,qid,postedBy,count(a) as answer_count,n.asked_at as time order by follow_count desc'
       session.run(query).then(function(data) {
+        var name;
         var result = data.records.map((row, index) => {
-          console.log(row._fields[1].low);
+          UserModel.find({'username':row._fields[3].properties.name},function(err,users){
+              if(users){
+                name = users[0].firstname+" "+users[0].lastname;
+              }
+            });
+
           return ({
             question: row._fields[0].properties.value,
             followcount: row._fields[1].low,
             questionid: row._fields[2].low,
-            postedBy: row._fields[3].properties.name,
+            postedBy: name,
             answercount: row._fields[4].low,
             time:row._fields[5]
           });
         });
+        console.log(result);
         res.send(result);
       });
     } else if (req.params.name == 'latestquestions') {

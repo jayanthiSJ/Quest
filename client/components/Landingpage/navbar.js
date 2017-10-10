@@ -5,6 +5,7 @@ import {Link,Redirect} from 'react-router-dom';
 //import Update_profile from './../Updateprofile/Update_profile.js';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import IndividualQuestion from '../ReactLandingpage/individualquestion.js';
+import AskQuestion from '../ReactLandingpage/texteditor.js'
 import Dialog from 'material-ui/Dialog';
 import Cookies from 'universal-cookie';
 const cookies = new Cookies();
@@ -23,12 +24,13 @@ class Navbar extends React.Component {
         logout:false,
         loginStatus:'',
         openAnswer: false,
-        answers:''
+        answers:'',
+        openAskQuestion:false
       }
     };
 
     handleClose(){
-      this.setState({openAnswer: false});
+      this.setState({openAnswer: false,openAskQuestion:false});
     }
 
     changeFirstname(e){
@@ -145,15 +147,18 @@ class Navbar extends React.Component {
       })
     }
 
+    askQuestion(){
+        this.setState({openAskQuestion:true})
+    }
+
     logout(){
-            cookies.remove('displayname');
             var that=this;
               $.ajax({
                    url:'/users/logOut',
                    type:'GET',
                    success:function(data){
-                     console.log(data);
                        that.setState({logStatus:false,logout:true});
+                       cookies.remove('displayname');
                        localStorage.removeItem('token');
                    },
                    error:function(err){
@@ -168,11 +173,8 @@ render(){
           <i className="material-icons">close</i>
         </FloatingActionButton>
       ];
-
-   if(this.state.logout){
-              this.setState({loginStatus: <Redirect to='/'/>}) ;
-       }
   return(
+
 <div className="row ">
  <div className="col-xs-6 col-md-12">
     <header className="header-tp">
@@ -189,12 +191,12 @@ render(){
              </div>
 
               <div id="navbar" className="navbar-collapse collapse ">
-               <div className=" col-sm-8 col-md-6 ">
+               <div className=" col-sm-8 col-md-4 ">
 
-               <div className="input-group">
-                   <input type="text" className="form-control" placeholder="Search"  onChange={this.changeSearchValue.bind(this)}/>
+               <div className="input-group " style={{marginTop:'4%',marginLeft:'15%'}}>
+                   <input type="text" className="form-control search" placeholder="Search"  onChange={this.changeSearchValue.bind(this)}/>
                    <div className="input-group-btn">
-                       <button className="btn btn-default"  onClick={this.search.bind(this)}><i className="glyphicon glyphicon-search"></i>
+                       <button className="btn btn-default searchBtn"  onClick={this.search.bind(this)}><i className="glyphicon glyphicon-search"></i>
                        <Dialog
                            actions={actions}
                            modal={false}
@@ -211,6 +213,21 @@ render(){
                    </div>
                </div>
 
+               </div>
+               <div className=" col-sm-8 col-md-2 askbtn ">
+                 <button type="button" className="btn btn-primary btn-round-lg btn-lg" onClick={this.askQuestion.bind(this)}>Ask Question
+                   <Dialog
+                       actions={actions}
+                       modal={false}
+                       open={this.state.openAskQuestion}
+                       autoDetectWindowHeight={true}
+                       autoScrollBodyContent={true}
+                       repositionOnUpdate={true}
+                       onRequestClose={this.handleClose.bind(this)}
+                     >
+                       <AskQuestion/>
+                     </Dialog>
+                 </button>
                </div>
 
                {this.state.logStatus?<ul className="nav navbar-nav navbar-right profileImg">

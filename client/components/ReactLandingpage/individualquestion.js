@@ -102,16 +102,16 @@ render(){
                 </FloatingActionButton> }
               </Col>
               <Col start xs={1} sm={1} md={1} className="voteCnt">
-                  {this.state.like}
+                {this.state.token &&  this.state.like}
               </Col>
               <Col start='xs sm md lg' xs={1} sm={1} md={1} className="voteBtn">
-                <FloatingActionButton  mini={true}  onClick={this.dislike.bind(this)}>
+                {this.state.token && <FloatingActionButton  mini={true}  onClick={this.dislike.bind(this)}>
                   <i className="material-icons">thumb_down</i>
-                </FloatingActionButton> 
+                </FloatingActionButton> }
               </Col>
-              <Col start xs={1} sm={1} md={1} className="voteCnt">
+            {this.state.token &&   <Col start xs={1} sm={1} md={1} className="voteCnt">
                   {this.state.dislike}
-              </Col>
+              </Col>}
                 <Col start='xs sm md lg' xs={2} sm={4} md={6} >
                   <CardText style={styles.cardtext1}>-answered  <Moment fromNow>{(this.props.timestamp).toString()}</Moment> by <a>{this.props.answered_by}</a></CardText>
                 </Col>

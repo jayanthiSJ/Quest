@@ -23,9 +23,18 @@ export default class Postanswer extends React.Component {
       this.state = {
         newAnswer:'',
         openEditor: false,
-        logStatus:false
+        logStatus:false,
+        token:null,
+        btnStatus:false
       };
 
+    }
+
+    componentWillMount(){
+      this.setState({token:token});
+      if(token != null){
+        this.setState({btnStatus:true});
+      }
     }
 
     handleClose(){

@@ -1,7 +1,7 @@
 import React from 'react';
 import $ from 'jquery';
 import {Tabs, Tab} from 'material-ui/Tabs';
-import {grey900,indigo200} from 'material-ui/styles/colors.js';
+import {grey900,indigo200,blue800,cyan800,teal500,tealA200} from 'material-ui/styles/colors.js';
 // From https://github.com/oliviertassinari/react-swipeable-views
 import SwipeableViews from 'react-swipeable-views';
 import Defaultimg from './../../images/default_profile.jpg';
@@ -26,18 +26,17 @@ const styles = {
   },
 
   tab:{
-    marginTop:'-3%',
-    marginLeft:'0%',
-    width:'100%',
-    fontFamily: 'Roboto',
-    paddingTop: '5%'
+
   },
 
   tabBtn:{
-    backgroundColor:grey900,
+    backgroundColor:teal500,
     fontFamily: 'Roboto',
     borderColor:'white',
-    border:'3px solid'
+    border:'3px solid',
+    borderTopLeftRadius:'45%',
+    borderBottomRightRadius:'25%',
+    marginLeft:'3%'
   },
 
   swipe:{
@@ -133,7 +132,6 @@ class Questiontabs extends React.Component {
           getUserQuestions(){
             var that=this;
             var name = 'userquestions';
-            console.log("@@@@@"+cookies.get('emailId'));
                $.ajax({
                  type:'GET',
                  url:'/question/'+name,
@@ -195,15 +193,20 @@ render(){
        <Tabs
           onChange={this.handleChange.bind(this)}
           value={this.state.slideIndex}
-          style={styles.tab}
+          style={{marginTop:'-3%',
+          marginLeft:'0%',
+          width:'100%',
+          fontFamily: 'Roboto',
+          paddingTop: '5%',
+          backgroundColor:'white',
+          fontFamily:'initial'}}
         >
 
-          <Tab style={styles.tabBtn}  icon={<i className="material-icons md-48">trending_up</i>} label="Top Questions" value={0} onActive={this.getTopQuestions.bind(this)} />
-          <Tab style={styles.tabBtn} icon={<i className="material-icons md-48">trending_up</i>} label="Latest" value={1} onActive={this.getLatestQuestions.bind(this)}/>
-          {this.state.token && <Tab style={styles.tabBtn} label="Your Questions" value={2} onActive={this.getUserQuestions.bind(this)}/>}
-          <Tab style={styles.tabBtn} label="Top Answered" value={3} onActive={this.getTopAnsweredQuestions.bind(this)}/>
-          <Tab style={styles.tabBtn} label="Unanswered" value={4} onActive={this.getUnAnsweredQuestions.bind(this)}/>
-          <Tab style={styles.tabBtn} label="Ask questions" value={5} />
+          <Tab style={styles.tabBtn}  icon={<i className="material-icons md-56">grade</i>} label="Top Questions" value={0} onActive={this.getTopQuestions.bind(this)} />
+          <Tab style={styles.tabBtn} icon={<i className="material-icons md-56">trending_up</i>} label="Latest" value={1} onActive={this.getLatestQuestions.bind(this)}/>
+          {this.state.token && <Tab style={styles.tabBtn} icon={<i className="material-icons">grade</i>}label="Your Questions" value={2} onActive={this.getUserQuestions.bind(this)}/>}
+          <Tab style={styles.tabBtn} icon={<i className="material-icons md-56">new_releases</i>} label="Unanswered" value={4} onActive={this.getUnAnsweredQuestions.bind(this)}/>
+          {/*}<Tab style={styles.tabBtn} label="Ask questions" value={5} />*/}
           </Tabs>
 
 
@@ -234,8 +237,6 @@ render(){
 
   </div>
   </div>
-
-
 )};
 };
 export default Questiontabs;

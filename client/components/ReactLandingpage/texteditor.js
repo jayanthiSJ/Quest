@@ -50,6 +50,7 @@ class Editor extends React.Component {
                },
                success: function(response) {
                    if(response == "Question posted"){
+                     that.setState({openAnswer: false});
                      alert("Posted succesfully");
                    }
                    else{

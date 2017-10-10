@@ -15,11 +15,18 @@
   background-repeat: no-repeat;
 }
 
-.search{
-  width:10%;
-  height:150%;
-  margin-top:2%;
+.btn-round-lg{
+border-radius: 22.5px;
 }
+
+.askbtn{
+  margin-left: 17%;
+  margin-top: 2.5%;
+  height:7%;
+  outline:none;
+}
+
+
 .navbar-header a{
 	color:grey !important;
 	}
@@ -47,6 +54,8 @@
 .navbar{
   position:fixed;
   width:100%;
+  border: '3px solid';
+  border-color: black;
 }
 .form-control{
   margin-top: 20px;
