@@ -8,7 +8,23 @@
   background-color: transparent !important;
   z-index: 999;
 }
+.sign{
+  font-family: 'Roboto' !important ;
+  height :50px;
+  margin-top:7px;
+}
+ .btnColor{
+   background-color: #990000;
+   color:white;
+    width: 120px;
+    height:70px`;
+    margin-left: 110px;
+    margin-top:8px;
+ }
 
+ .btnColor a:focus{
+   font-color:white;
+ }
 .inset img {
   border-radius: inherit;
   width: inherit;
@@ -62,11 +78,18 @@
   margin-top: 10%;
 }
 
-.copyright{
-  margin-top:20px;
-  font-size:20px;
-}
+.footer1{
+  background-color: white;
 
+}
+.copyRights{
+  margin-top:10px;
+  color:'black';
+  font-family:'Roboto';
+  text-align: center;
+  font-weight:bold;
+  padding-bottom:-30px;
+}
 .svgicon{
   width:130%;
   height:130%;
@@ -79,7 +102,19 @@
   font-weight:bold;
   margin-bottom:-7%;
 }
+.faf{
+  color:#3B5998;
 
+}
+.fat{
+  color:#006DBF;
+}
+.fai{
+  color:darkpink;
+}
+.fay{
+  color:red;
+}
 
 .voteBtn{
   margin:2%;

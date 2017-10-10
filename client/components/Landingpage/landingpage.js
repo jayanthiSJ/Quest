@@ -198,8 +198,22 @@ class Landingpage extends React.Component {
          </div>
        ))}
       </div>
+   </div>}
+   <div className="container">
+     <div className="footer-block footer1">
+ <div className="container  copyRights">
+   <ul className="list-inline bullets">
+                       <li><i className="fa fa-facebook faf fa-lg"></i></li>
+                       <li><i className="fa fa-twitter fat fa-lg"></i></li>
+                       <li><i className="fa fa-instagram  fai fa-lg"></i></li>
+                       <li><i className="fa fa-youtube fay fa-lg"></i></li>
+
+                      <p class="pull-right">Copyright 2017 © Quoser Pvt. Ltd.</p>
+                     </ul>
+
+ </div>
+</div>
    </div>
-{this.state.visitSite}
 </div>
 
 )};

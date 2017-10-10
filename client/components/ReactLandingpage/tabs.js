@@ -25,10 +25,6 @@ const styles = {
 
   },
 
-  tab:{
-
-  },
-
   tabBtn:{
     fontFamily: 'Roboto',
     marginLeft:'3%'
@@ -208,7 +204,7 @@ render(){
         <SwipeableViews
           index={this.state.slideIndex}
           onChangeIndex={this.handleChange.bind(this)}
-          style={{width: '100%',height: '100%',textAlign: 'center',marginTop:'3%',fontFamily: 'Roboto'}}
+          style={{width: '100%',height: '100%',textAlign: 'center',marginTop:'3%',fontFamily: 'Roboto',backgroundColor:'white'}}
         >
           <div style={styles.slide}>
             {this.state.topratedquestions}

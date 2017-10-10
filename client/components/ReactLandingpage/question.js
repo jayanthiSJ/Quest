@@ -30,6 +30,7 @@ import Postanswer from './postAnswer.js';
 import './reactlandingpage.css';
 import Cookies from 'universal-cookie';
 
+
 const cookies = new Cookies();
 const styles = {
   col1:{
@@ -94,7 +95,8 @@ export default class Question extends React.Component {
         button:false,followups:this.props.followCount,
         displayAnswer:false,
         user:null,
-        firstletter:''
+        firstletter:'',
+        followSuccess:'',
       };
 
     }
@@ -134,7 +136,7 @@ export default class Question extends React.Component {
       url:'/followStatus',
       data:{user:user},
       success:function(data){
-        console.log(data);
+
         data.map((row,index)=>{
             if(row.qid == that.props.qid){
               that.setState({followBtn:false});
@@ -157,6 +159,15 @@ export default class Question extends React.Component {
     this.setState({postButton:false});
     this.setState({answers : answers});
   }
+  checkForFetchErrorAlert() {
+      this.refs.asd.error(
+        'success while following',
+      '', {
+        timeOut: 3000,
+        extendedTimeOut: 3000
+          }
+    );
+    }
 
   fetchAnswer(){
     var that =this;
@@ -176,13 +187,13 @@ export default class Question extends React.Component {
           else{
             that.setState({postButton:true,displayAnswer:true});
             answers = answers.map((row,index)=> {
-             return <IndividualQuestion answer={row.answer} answered_by={row.answered_by} likes={row.likes} dislikes={row.dislikes} answerid={row.answerId} timestamp={row.time} key = {index}/>
+             return <IndividualQuestion answer={row.answer}  answered_by={row.answered_by} likes={row.likes} dislikes={row.dislikes} answerid={row.answerId} timestamp={row.time} key = {index}/>
            });
          }
          that.setState({answers : answers});
     },
     error:function(err){
-        alert(JSON.stringify(err));
+        that.checkForFetchErrorAlert();
     }
     })
   }
@@ -190,7 +201,15 @@ export default class Question extends React.Component {
   handleClose(){
     this.setState({openAnswer: false});
   }
-
+  checkForFollowSuccessAlert() {
+    this.refs.asd.success(
+      'successfully followed',
+    '', {
+      timeOut: 3000,
+      extendedTimeOut: 3000
+        }
+  );
+  }
   followQuestion(){
     var that = this;
     var qid = this.props.qid;
@@ -201,21 +220,31 @@ export default class Question extends React.Component {
       data:{user:cookies.get('emailId')},
       success:function(data){
           that.setState({followBtn:false,followups:that.props.followCount});
-          alert("follow success");
+        //  alert("follow success");
+       var FollowSuccess= that.checkForFollowSuccessAlert();
       },
       error:function(err){
           alert(err);
       }
       })
   }
-  checkForSuccessAlert() {
+  checkForUnFollowSuccessAlert() {
     this.refs.asd.success(
-      'success message alert',
+      'Successfully unfollowed',
     '', {
       timeOut: 3000,
       extendedTimeOut: 3000
         }
  );
+}
+checkForUnFollowErrorAlert() {
+  this.refs.asd.error(
+    'error while unfollowed',
+  '', {
+    timeOut: 3000,
+    extendedTimeOut: 3000
+      }
+);
 }
   unFollowQuestion(){
     var that = this;
@@ -227,7 +256,7 @@ export default class Question extends React.Component {
       data:{user:cookies.get('emailId')},
       success:function(data){
           that.setState({followBtn:true,followups:that.props.followCount-1});
-          that.checkForSuccessAlert();
+          that.checkForUnFollowSuccessAlert();
       },
       error:function(err){
           alert(err);
@@ -237,6 +266,7 @@ export default class Question extends React.Component {
 
 
   render(){
+
     const actions = [
           <FloatingActionButton mini={true} onClick={this.handleClose.bind(this)} style={{align:'center'}}>
             <i className="material-icons">close</i>
@@ -246,7 +276,7 @@ export default class Question extends React.Component {
       <div>
         <ToastContainer ref='asd'
           toastMessageFactory={ToastMessageFactory}
-          className='toast-top-center' style={{marginTop:'40%'}}/>
+          className='toast-top-center'/>
     <Paper  zDepth={5} style={styles.paper}>
       <Table style={{marginTop:'1%',marginBottom:'1%',}}>
         <TableBody displayRowCheckbox={false} style={{paddingTop:'5%'}}>

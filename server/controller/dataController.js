@@ -120,6 +120,7 @@ module.exports = {
       session.run(query).then(function(data) {
         var name;
         var result = data.records.map((row, index) => {
+
           return ({
             question: row._fields[0].properties.value,
             followcount: row._fields[1].low,

@@ -1,5 +1,6 @@
 import React from 'react';
 import './landingpage.css';
+import '../ReactLandingpage/reactlandingpage.css';
 import Defaultimg from './../../images/default_profile.jpg';
 import {Link,Redirect} from 'react-router-dom';
 //import Update_profile from './../Updateprofile/Update_profile.js';
@@ -8,6 +9,9 @@ import IndividualQuestion from '../ReactLandingpage/individualquestion.js';
 import AskQuestion from '../ReactLandingpage/texteditor.js'
 import Dialog from 'material-ui/Dialog';
 import Cookies from 'universal-cookie';
+const ReactToastr = require('react-toastr');
+const {ToastContainer} = ReactToastr;
+const ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage.animation);
 const cookies = new Cookies();
 
 class Navbar extends React.Component {
@@ -49,23 +53,50 @@ class Navbar extends React.Component {
     changeSearchValue(e){
       this.setState({searchValue:e.target.value});
     }
-
+    checkForSignupSuccessAlert() {
+        this.refs.asd.error(
+          'successfuly signed up',
+        '', {
+          timeOut: 3000,
+          extendedTimeOut: 3000
+            }
+      );
+      }
+      checkForUserExistAlert() {
+          this.refs.asd.error(
+            'User exists',
+          '', {
+            timeOut: 3000,
+            extendedTimeOut: 3000
+              }
+        );
+        }
+      checkForSignupErrorAlert() {
+          this.refs.asd.error(
+            'Error while signing up',
+          '', {
+            timeOut: 3000,
+            extendedTimeOut: 3000
+              }
+        );
+        }
   /*ajax call for signup routes*/
     signUp(){
+      var that=this;
       $.ajax({
         url:'/users/signup',
         type: 'POST',
         data:{'firstname':this.state.firstname,'lastname':this.state.lastname,'username':this.state.username,'password':this.state.password},
         success: function(response) {
             if(response.status == 'Successfully registered'){
-              alert("Successfully registered!!!Please login to visit the site")
+              that.checkForSignupSuccessAlert() ;
             }
             else{
-              alert("User already exists!!!");
+              that.checkForUserExistAlert();
             }
         },
         error: function(err) {
-            alert("Registration failed!!Try again....");
+            that.checkForSignupErrorAlert();
         }
       })
     }
@@ -89,7 +120,42 @@ class Navbar extends React.Component {
         }
       })
     }
-
+    checkForInvalidCredentialsAlert() {
+        this.refs.asd.error(
+          'Provise valid credentials',
+        '', {
+          timeOut: 3000,
+          extendedTimeOut: 3000
+            }
+      );
+      }
+      checkForUserAlert() {
+          this.refs.asd.error(
+            'User doesnt exists...Please signup',
+          '', {
+            timeOut: 3000,
+            extendedTimeOut: 3000
+              }
+        );
+        }
+        checkForSuccessfullyLoggedAlert() {
+            this.refs.asd.error(
+              'Successfully logged!!!',
+            '', {
+              timeOut: 3000,
+              extendedTimeOut: 3000
+                }
+          );
+          }
+          checkForFailedLoggedAlert() {
+              this.refs.asd.error(
+                ' login Failed!!!',
+              '', {
+                timeOut: 3000,
+                extendedTimeOut: 3000
+                  }
+            );
+            }
   /*ajax call for login routes*/
     login(){
       var that = this;
@@ -99,10 +165,10 @@ class Navbar extends React.Component {
         data:{'username':that.state.username,'password':that.state.password},
         success: function(response) {
             if(response == 'Invalid credentials'){
-              alert("Provide valid credentials....");
+                  that.checkForInvalidCredentialsAlert();
             }
             else if(response == 'No user'){
-              alert("User doesnt exists...Please signup");
+              that.checkForUserAlert();
             }
             else{
               that.setState({logStatus:true});
@@ -113,15 +179,23 @@ class Navbar extends React.Component {
               cookies.set('emailId',emailId);
               cookies.set('token',token);
               localStorage.setItem('token',token);
-              alert("Successfully logged!!!")
+          that.checkForSuccessfullyLoggedAlert();
             }
         },
         error: function(err) {
-            alert("Login failed!!Try again....");
+              that.checkForFailedLoggedAlert();
         }
       })
     }
-
+    checkForFailedSearchAlert() {
+        this.refs.asd.error(
+          ' Search failed!!Try again...',
+        '', {
+          timeOut: 3000,
+          extendedTimeOut: 3000
+            }
+      );
+      }
     search(){
       var that = this;
       that.setState({openAnswer:true});
@@ -142,7 +216,7 @@ class Navbar extends React.Component {
          that.setState({answers : answers});
         },
         error: function(err) {
-            alert("Search failed!!Try again....");
+          that.checkForFailedSearchAlert();
         }
       })
     }
@@ -150,7 +224,15 @@ class Navbar extends React.Component {
     askQuestion(){
         this.setState({openAskQuestion:true})
     }
-
+    checkForFailedLogout() {
+        this.refs.asd.error(
+          ' logoutFailed..',
+        '', {
+          timeOut: 3000,
+          extendedTimeOut: 3000
+            }
+      );
+      }
     logout(){
             var that=this;
               $.ajax({
@@ -159,11 +241,13 @@ class Navbar extends React.Component {
                    success:function(data){
                        that.setState({logStatus:false,logout:true});
                        cookies.remove('displayname');
-                        cookies.remove('emailId');
+                       cookies.remove('emailId');
+                       cookies.remove('token');
                        localStorage.removeItem('token');
+                       location.reload();
                    },
                    error:function(err){
-                     alert('Failed to logout!!!');
+                    that.checkForFailedLogout();
                    }
               });
     }
@@ -215,8 +299,12 @@ render(){
                </div>
 
                </div>
+
+
+
                <div className=" col-sm-8 col-md-2 askbtn ">
-                 <button type="button" className="btn btn-primary btn-round-lg btn-lg" onClick={this.askQuestion.bind(this)}>Ask Question
+
+                 <button type="button" className=" btn btn-round-lg btn-sm  btnColor" onClick={this.askQuestion.bind(this)}>Ask Question <i className="fa fa-question" aria-hidden="true"></i>
                    <Dialog
                        actions={actions}
                        modal={false}
@@ -229,6 +317,7 @@ render(){
                        <AskQuestion/>
                      </Dialog>
                  </button>
+                 <i class="fa fa-question" aria-hidden="true"></i>
                </div>
 
                {this.state.logStatus?<ul className="nav navbar-nav navbar-right profileImg">
@@ -245,7 +334,7 @@ render(){
                          </ul>
                        </li>
                      </ul>:<ul className="nav navbar-nav navbar-right bdr">
-                              <li><a href="#" data-toggle="modal" data-target="#at-login">Sign in</a></li>
+                              <li><a href="#"className="sign" data-toggle="modal" data-target="#at-login">Sign in</a></li>
                               </ul>}
              </div>
           </div>
@@ -356,7 +445,9 @@ render(){
                    <button type="submit" className="btn-lgin" >Signup</button>
                 </form>
              </div>
+
              <div className="modal-footer">
+
                 <div className="row">
                    <div className="col-md-6">
                       <p className="ta-l">Already a Member? </p>
@@ -366,9 +457,11 @@ render(){
                    </div>
                 </div>
              </div>
+
           </div>
        </div>
     </div>
+
     {/*MODAL SIGNUP FORM FILLING*/}
     {/*MODAL FORGOT PASSWORD*/}
     <div className="modal fade" id="at-reset-pswd" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel">
