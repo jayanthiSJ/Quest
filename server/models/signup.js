@@ -9,7 +9,7 @@ module.exports = mongoose.model('user', {
     picture:
     {
       type: String,
-      default:'picture'
+      default:''
     },
 
   });

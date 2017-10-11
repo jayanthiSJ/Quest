@@ -29,8 +29,10 @@ class Navbar extends React.Component {
         loginStatus:'',
         openAnswer: false,
         answers:'',
-        openAskQuestion:false
+        openAskQuestion:false,
+        //profilepic:"../../../pictures/"+this.state.picture
       }
+      this.getallData = this.getallData.bind(this);
     };
 
     handleClose(){
@@ -259,6 +261,59 @@ class Navbar extends React.Component {
                    }
               });
     }
+    componentWillMount(){
+      this.getallData();
+    }
+    getallData() {
+    //let a = cookies.get('emailId');
+    let context = this;
+   console.log(this.state.username);
+   alert("getalldate");
+      $.ajax({
+          url:'/view',
+          type:'POST',
+          data:{name: cookies.get('emailId')},
+          success:function(data){
+           //  //console.log("in profile image ",JSON.stringify(data));
+
+           alert(data);
+           if(data == '' ){
+             context.setState({picture:'../../../pictures/profile.png'});
+           }
+           else{
+             context.setState({picture:data});
+           }
+             //  //console.log("data"+JSON.stringify(data));
+               //context.setState({
+              //     userName: data[0].userName,
+              //     teamName:data[0].teamName,
+              //    //  score:data[0].score,
+              //     completedDomain:data[0].completedDomain,
+              //     currentDomain:data[0].currentDomain,
+              //     currentScenarioName:data[0].currentScenarioName,
+              //     empId:data[0].empId,
+                 //emailId:data[0].emailId,
+              //     currentPwd: data[0].password,
+              //     statusInformation:data[0].statusInformation,
+              //     //picture:data[0].picture,
+              //    //  completedScenario:data[0].completedScenario,
+              //     completedScenario:data[0].completedScenario,
+              //     userDescription: data[0].userDescription,
+              //     userDescriptionUpdate: data[0].userDescription,
+              //     btnStatus: true,
+              //     currPwdCheck: false,
+              //     newPwdcheck: false
+               //})
+              //
+              //    //console.log("success");
+              //    context.getAllDetailsOfTeam();
+              },
+              error: function(err){
+                //console.log("error",err);
+     }});
+     // //console.log("sssss");
+     // //console.log(this.state.completedScenario);
+  }
 
 render(){
   const actions = [

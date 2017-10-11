@@ -101,16 +101,16 @@ render()
     console.log(this.state.statusInformation);
     if(this.state.allFiles.preview == undefined)
     {
-      //console.log("undefined");
+      console.log("undefined");
       imagechange = (<Image src={require("../../../pictures/"+pic)} style={{
-            height: 200,width: 200
+            height: 200,width: 190
         }}/>);
         //console.log(pic);
     }
     else{
           //console.log("defined"+this.state.allFiles.preview);
           imagechange = (<Image src={this.state.allFiles.preview} style={{
-              height: 200,width:200
+              height: 200,width:190
           }}/>);
         }
          }
@@ -118,7 +118,7 @@ render()
           imagechange = (
            <Image src={require("../../../pictures/profile.png")}
                    size='large' style= {{
-                     height: 200,width:200
+                     height: 200,width:190
                  }}/>);
       }
 return(

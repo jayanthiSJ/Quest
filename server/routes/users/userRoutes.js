@@ -15,6 +15,7 @@ router.post('/followQuestion/:questionid', dataController.addFollow);
 router.post('/unFollowQuestion/:questionid', dataController.unFollow);
 router.post('/answerLikes/:answerid', dataController.answerLikes);
 router.post('/answerDislikes/:answerid', dataController.answerDislikes);
+router.post('/view', profileController.viewProfile);
 //router.post('/updateprofile',profileController.changeProfile);
 router.post('/uploadImage', profileController.changeProfilePicture);
 let imageArray = '';
