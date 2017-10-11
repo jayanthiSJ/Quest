@@ -29,10 +29,10 @@ module.exports = function(passport) {
     });
 
     /* signupFacebook action */
-    router.post('/signupFacebook',passport.authenticate('signupFacebook',{
-        successRedirect:'/home',
-        failureRedirect:'/users/loginfailed',
-    }));
+    // router.post('/signupFacebook',passport.authenticate('signupFacebook',{
+    //     successRedirect:'/home',
+    //     failureRedirect:'/users/loginfailed',
+    // }));
 
     /*login action*/
     router.post('/login',function(req,res,next){
@@ -62,6 +62,6 @@ module.exports = function(passport) {
        }
      });
    });
-    router.post('/updateProfile', profileController.updateProfile);
+    //router.post('/updateProfile', profileController.updateProfile);
     return router;
 }
