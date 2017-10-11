@@ -3,7 +3,7 @@ import './landingpage.css';
 import '../ReactLandingpage/reactlandingpage.css';
 import Defaultimg from './../../images/default_profile.jpg';
 import {Link,Redirect} from 'react-router-dom';
-//import Update_profile from './../Updateprofile/Update_profile.js';
+import Updateprofile from './../Updateprofile/Updateprofile.js';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import IndividualQuestion from '../ReactLandingpage/individualquestion.js';
 import AskQuestion from '../ReactLandingpage/texteditor.js'
@@ -34,7 +34,7 @@ class Navbar extends React.Component {
     };
 
     handleClose(){
-      this.setState({openAnswer: false,openAskQuestion:false});
+      this.setState({openAnswer: false,openAskQuestion:false,openprofile: false});
     }
 
     changeFirstname(e){
@@ -52,6 +52,14 @@ class Navbar extends React.Component {
 
     changeSearchValue(e){
       this.setState({searchValue:e.target.value});
+    }
+    Update()
+    {
+    this.setState({openprofile: true});
+    }
+    closeState()
+    {
+    this.setState({openprofile: false});
     }
     checkForSignupSuccessAlert() {
         this.refs.asd.error(
@@ -327,7 +335,18 @@ render(){
                          <img className="inset" src={Defaultimg}/>
                           </a>
                          <ul className="dropdown-menu" role="menu">
-                           <li><a data-toggle="modal" data-target="#profile"><i className="fa fa-user"></i> Profile</a></li>
+                           <li><a data-toggle="modal" data-target="#profile" onClick={this.Update.bind(this)}><i className="fa fa-user"></i> Profile</a></li>
+                           <Dialog
+                              actions={actions}
+                              modal={false}
+                              open={this.state.openprofile}
+                              autoDetectWindowHeight={true}
+                             autoScrollBodyContent={true}
+                             repositionOnUpdate={true}
+                              onRequestClose={this.handleClose.bind(this)}
+                            >
+                            <Updateprofile/>
+                            </Dialog>
                            <li className="divider"></li>
                            <li><a href="#" onClick={this.logout.bind(this)}><span className="fa fa-power-off" ></span> Log Out</a></li>
                            {this.state.logStatus}
