@@ -7,6 +7,7 @@ import $ from 'jquery';
 import Cookies from 'universal-cookie';
 
 const cookies = new Cookies();
+var token = cookies.get('token');
 const styles={
   submitbtn:{
     width:'50%',
@@ -23,7 +24,16 @@ class Editor extends React.Component {
         title:'',
         description:'',
         openAnswer: false,
-        answers:''
+        answers:'',
+        token:null,
+        btnStatus:false
+      }
+    }
+
+    componentWillMount(){
+      this.setState({token:token});
+      if(token != null){
+        this.setState({btnStatus:true});
       }
     }
 
@@ -83,9 +93,9 @@ class Editor extends React.Component {
             <label for="exampleTextarea">Description</label>
             <textarea className="form-control" id="exampleTextarea" rows="13" onChange={this.descriptionChange.bind(this)}></textarea>
           </div>
-          <RaisedButton  primary={true} style={styles.submitbtn} onClick={this.postQuestion.bind(this)}>Post your question
+        { this.state.token ?  <RaisedButton  primary={true} style={styles.submitbtn} onClick={this.postQuestion.bind(this)}>Post your question
           <Dialog
-              actions={actions}
+             actions={actions}
               modal={false}
               open={this.state.openAnswer}
               onRequestClose={this.handleClose.bind(this)}
@@ -93,7 +103,7 @@ class Editor extends React.Component {
               <h1><center><b><p className="individualquestion">{this.state.description}?</p></b></center></h1>
               {this.state.answers}
             </Dialog>
-          </RaisedButton>
+          </RaisedButton> : <center><b>Signin/Signup to continue</b></center> }
           </div>
         );
     }

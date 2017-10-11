@@ -13,6 +13,7 @@ const ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage.animati
 
 
 const cookies = new Cookies();
+var token = cookies.get('token');
 const styles = {
   card:{
     margin:'2%',
@@ -38,10 +39,18 @@ class IndividualQuestion extends React.Component {
         like:this.props.likes,
         dislike:this.props.dislikes,
         time:new Date().toString(),
-        disable:false
+        disable:false,
+        token:null,
+        btnStatus:false
       }
     };
 
+    componentWillMount(){
+      this.setState({token:token});
+      if(token != null){
+        this.setState({btnStatus:true});
+      }
+    }
 
     checkForLikeSuccessAlert() {
         this.refs.asd.error(
@@ -133,22 +142,22 @@ render(){
               </Col>
             </Row>
             <Row center='xs sm md lg'>
-              <Col start xs={1} sm={1} md={1} className="voteBtn">
-                {this.state.token && <FloatingActionButton  mini={true}  onClick={this.like.bind(this)}>
+              {this.state.token && <div> <Col start xs={1} sm={1} md={1} className="voteBtn">
+              <FloatingActionButton  mini={true}  onClick={this.like.bind(this)}>
                   <i className="material-icons">thumb_up</i>
-                </FloatingActionButton> }
+                </FloatingActionButton>
               </Col>
               <Col start xs={1} sm={1} md={1} className="voteCnt">
-                {this.state.token &&  this.state.like}
-              </Col>
-              <Col start='xs sm md lg' xs={1} sm={1} md={1} className="voteBtn">
-                {this.state.token && <FloatingActionButton  mini={true}  onClick={this.dislike.bind(this)}>
+                {this.state.like}
+              </Col> </div>}
+                {this.state.token && <div>  <Col start='xs sm md lg' xs={1} sm={1} md={1} className="voteBtn">
+              <FloatingActionButton  mini={true}  onClick={this.dislike.bind(this)}>
                   <i className="material-icons">thumb_down</i>
-                </FloatingActionButton> }
+                </FloatingActionButton>
               </Col>
-            {this.state.token &&   <Col start xs={1} sm={1} md={1} className="voteCnt">
+          <Col start xs={1} sm={1} md={1} className="voteCnt">
                   {this.state.dislike}
-              </Col>}
+              </Col> </div>}
                 <Col start='xs sm md lg' xs={2} sm={4} md={6} >
                   <CardText style={styles.cardtext1}>-answered  <Moment fromNow>{(this.props.timestamp).toString()}</Moment> by <a>{this.props.answered_by}</a></CardText>
                 </Col>
