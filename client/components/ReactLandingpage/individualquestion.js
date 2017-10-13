@@ -53,7 +53,7 @@ class IndividualQuestion extends React.Component {
     }
 
     checkForLikeSuccessAlert() {
-        this.refs.asd.error(
+      this.props.toaster.success(
           'Liked successfully',
         '', {
           timeOut: 3000,
@@ -62,7 +62,7 @@ class IndividualQuestion extends React.Component {
       );
       }
       checkForLikeFailedAlert() {
-          this.refs.asd.error(
+          this.props.toaster.error(
             'Error while liking..!',
           '', {
             timeOut: 3000,
@@ -93,7 +93,7 @@ like(){
 
 }
 checkForDisLikeSuccessAlert() {
-    this.refs.asd.error(
+    this.props.toaster.error(
       'DisLiked successfully',
     '', {
       timeOut: 3000,
@@ -101,7 +101,7 @@ checkForDisLikeSuccessAlert() {
         }
   );
 }checkForDisLikeErrorAlert() {
-      this.refs.asd.error(
+      this.props.toaster.error(
         'Error while DisLiking ',
       '', {
         timeOut: 3000,
@@ -135,6 +135,7 @@ dislike(){
 render(){
   return(
     <div>
+
         <Card style={styles.card}>
             <Row center='xs sm md lg'>
               <Col xs={4} sm={6} md={12} >
@@ -147,7 +148,7 @@ render(){
                   <i className="material-icons">thumb_up</i>
                 </FloatingActionButton>
               </Col>
-              <Col start xs={1} sm={1} md={1} className="voteCnt">
+              <Col end xs={1} sm={1} md={1} className="voteCnt">
                 {this.state.like}
               </Col> </div>}
                 {this.state.token && <div>  <Col start='xs sm md lg' xs={1} sm={1} md={1} className="voteBtn">
@@ -155,11 +156,11 @@ render(){
                   <i className="material-icons">thumb_down</i>
                 </FloatingActionButton>
               </Col>
-          <Col start xs={1} sm={1} md={1} className="voteCnt">
+          <Col end xs={1} sm={1} md={1} className="voteCnt">
                   {this.state.dislike}
               </Col> </div>}
                 <Col start='xs sm md lg' xs={2} sm={4} md={6} >
-                  <CardText style={styles.cardtext1}>-answered  <Moment fromNow>{(this.props.timestamp).toString()}</Moment> by <a>{this.props.answered_by}</a></CardText>
+                  <CardText style={styles.cardtext1}>Answered  <Moment fromNow>{(this.props.timestamp).toString()}</Moment> by <a>{this.props.answered_by}</a></CardText>
                 </Col>
             </Row>
         </Card>

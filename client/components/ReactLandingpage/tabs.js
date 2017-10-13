@@ -4,10 +4,13 @@ import {Tabs, Tab} from 'material-ui/Tabs';
 import {grey900,indigo200,blue800,cyan800,teal500,tealA200,cyanA700} from 'material-ui/styles/colors.js';
 // From https://github.com/oliviertassinari/react-swipeable-views
 import SwipeableViews from 'react-swipeable-views';
-import Defaultimg from './../../images/default_profile.jpg';
+//import Defaultimg from './../../images/default_profile.jpg';
 import Logo from './../../images/QandA.jpg';
 import IndividualQuestion from './individualquestion.js';
 import {Card, CardActions, CardTitle, CardText,CardMedia,CardHeader} from 'material-ui/Card';
+const ReactToastr = require('react-toastr');
+const {ToastContainer,ToastMessage} = ReactToastr;
+const ToastMessageFactory = React.createFactory(ToastMessage.animation);
 import Question from './question.js';
 import Editor from './texteditor.js';
 import './reactlandingpage.css';
@@ -50,14 +53,12 @@ class Questiontabs extends React.Component {
         followCount:''
       };
     }
-
+/* topQuestions in componentWillMount*/
     componentWillMount(){
       var that=this;
-      let token = localStorage.getItem('token');
-      // alert(user);
-      // if(user != ''){
-      //   that.setState({logStatus:true});
-      // }
+      //let token = localStorage.getItem('token');
+      let token= cookies.get('token');
+
       var name = 'topquestions';
          $.ajax({
            type:'GET',
@@ -65,7 +66,7 @@ class Questiontabs extends React.Component {
            data:{},
            success:function(data){
           var  topratedQuestions = data.map((row,index)=> {
-               return <Question name="topquestions" question = {row.question} followCount={row.followcount} postedBy={row.postedBy} timestamp={row.time} answerCount={row.answercount} qid={row.questionid} key = {index}/>
+               return <Question name="topquestions" question = {row.question} toaster={that.refs.toasterContainer} followCount={row.followcount} postedBy={row.postedBy} timestamp={row.time} answerCount={row.answercount} qid={row.questionid} key = {index}/>
              });
              that.setState({topratedquestions : topratedQuestions, token: token});
            },
@@ -81,7 +82,7 @@ class Questiontabs extends React.Component {
         slideIndex: value
       });
     }
-
+/*  getting topQuestions*/
         getTopQuestions(){
           var that=this;
           var name = 'topquestions';
@@ -91,7 +92,7 @@ class Questiontabs extends React.Component {
                data:{},
                success:function(data){
               var  topratedQuestions = data.map((row,index)=> {
-                   return <Question name="topquestions" question = {row.question} followCount={row.followcount} postedBy={row.postedBy} timestamp={row.time} answerCount={row.answercount} qid={row.questionid} key = {index}/>
+                   return <Question name="topquestions" question = {row.question} toaster={that.refs.toasterContainer} followCount={row.followcount} postedBy={row.postedBy} timestamp={row.time} answerCount={row.answercount} qid={row.questionid} key = {index}/>
                  });
                  that.setState({topratedquestions : topratedQuestions});
                },
@@ -100,17 +101,21 @@ class Questiontabs extends React.Component {
                }
              });
          }
-
+/*getting latestquestions*/
          getLatestQuestions(){
            var that=this;
            var name = 'latestquestions';
+
               $.ajax({
+
                 type:'GET',
                 url:'/question/'+name,
                 data:{},
+
                  success:function(data){
+
                    var  latestQuestions = data.map((row,index)=> {
-                  return <Question name="latestquestions" question = {row.question} followCount={row.followcount} postedBy={row.postedBy} timestamp={row.time} answerCount={row.answercount} qid={row.questionid}  key = {index}/>
+                  return <Question name="latestquestions" toaster={that.refs.toasterContainer} question = {row.question} followCount={row.followcount} postedBy={row.postedBy} timestamp={row.time} answerCount={row.answercount} qid={row.questionid}  key = {index}/>
                 });
                 that.setState({latestquestions : latestQuestions});
               },
@@ -120,6 +125,29 @@ class Questiontabs extends React.Component {
         });
           }
 
+checkForInfoYourQuestion() {
+        this.props.toaster.error(
+          'Post Question to view your Question',
+        '', {
+          timeOut: 3000,
+          extendedTimeOut: 3000
+            }
+      );
+      }
+
+   checkForErrorYourQuestion() {
+        this.props.toaster.error(
+          'Signin/SignUp to view Questions posted by you',
+        '', {
+          timeOut: 3000,
+          extendedTimeOut: 3000
+            }
+      );
+      }
+
+
+
+/*getting userquestions*/
           getUserQuestions(){
             var that=this;
             var name = 'userquestions';
@@ -128,17 +156,28 @@ class Questiontabs extends React.Component {
                  url:'/question/'+name,
                  data:{user:cookies.get('emailId')},
                   success:function(data){
-                    var  userQuestions = data.map((row,index)=> {
-                   return <Question name="userquestions" question = {row.question} followCount={row.followcount} postedBy={row.postedBy} timestamp={row.time} answerCount={row.answercount} qid={row.questionid}  key = {index}/>
+                    var userQuestions;
+                    if(userQuestions == 'No Question'){
+            if(that.state.token){
+                that.checkForInfoYourQuestion();
+            }
+            else{
+              that.checkForErrorYourQuestion();
+            }
+          }
+          else {
+                  userQuestions = data.map((row,index)=> {
+                   return <Question name="userquestions" question = {row.question}  toaster={that.refs.toasterContainer} followCount={row.followcount} postedBy={row.postedBy} timestamp={row.time} answerCount={row.answercount} qid={row.questionid}  key = {index}/>
                  });
+               }
                  that.setState({userquestions : userQuestions});
                },
                error:function(err){
-                 alert(err);
+                 that.checkForErrorYourQuestion();
                }
          });
            }
-
+/*getting topansweredQuestions*/
           getTopAnsweredQuestions(){
             var that=this;
             var name = 'topAnswered';
@@ -148,7 +187,7 @@ class Questiontabs extends React.Component {
                  data:{},
                   success:function(data){
                     var  topansweredQuestions = data.map((row,index)=> {
-                   return <Question name="topAnswered" question = {row.question} followCount={row.followcount} postedBy={row.postedBy}  answerCount={row.answercount} qid={row.questionid} timestamp={row.time}  key = {index}/>
+                   return <Question name="topAnswered" question = {row.question} toaster={that.refs.toasterContainer} followCount={row.followcount} postedBy={row.postedBy}  answerCount={row.answercount} qid={row.questionid} timestamp={row.time}  key = {index}/>
                  });
                  that.setState({topansweredquestions : topansweredQuestions});
                },
@@ -157,7 +196,7 @@ class Questiontabs extends React.Component {
                }
          });
           }
-
+/*getting unansweredQuestions*/
          getUnAnsweredQuestions(){
            var that=this;
            var name = 'unanswered';
@@ -167,8 +206,10 @@ class Questiontabs extends React.Component {
                 data:{},
                  success:function(data){
                    console.log("data",data);
+
                    var  unansweredQuestions = data.map((row,index)=> {
-                  return <Question name="unanswered" question = {row.question} followCount={row.followcount} postedBy={row.postedBy} timestamp={row.time} qid={row.questionid} key = {index}/>
+
+                  return <Question   name="unanswered" question = {row.question} toaster={that.refs.toasterContainer} followCount={row.followcount} postedBy={row.postedBy} timestamp={row.time} qid={row.questionid} key = {index}/>
                 });
                 that.setState({unansweredquestions : unansweredQuestions});
               },
@@ -177,9 +218,25 @@ class Questiontabs extends React.Component {
               }
         });
          }
+         /*checkForToast*/
+        checkForToast(){
+          this.refs.toasterContainer.success(
+              'DisLiked successfully',
+            '', {
+              timeOut: 3000,
+              extendedTimeOut: 3000
+            });
+        }
+
 render(){
   return(
+
   <div className="row container-fluid">
+    <ToastContainer ref="toasterContainer"
+      toastMessageFactory={ToastMessageFactory}
+      className='toast-top-center'/>
+
+
     <div >
        <Tabs
           onChange={this.handleChange.bind(this)}
@@ -212,17 +269,14 @@ render(){
           <div style={styles.slide}>
             {this.state.latestquestions}
           </div>
-        <div style={styles.slide}>
+         { this.state.token ? <div style={styles.slide}>
             {this.state.userquestions}
-          </div>
+          </div> : <center>Signin/SignUp to view the questions posted by you</center>}
           <div style={styles.slide}>
             {this.state.topansweredquestions}
           </div>
           <div style={styles.slide}>
             {this.state.unansweredquestions}
-          </div>
-          <div style={styles.slide}>
-            { this.state.token ? <Editor/> : <center><b>Signin/Signup to continue</b></center>}
           </div>
         </SwipeableViews>
 

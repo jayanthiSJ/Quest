@@ -11,23 +11,27 @@ const styles = {
   paper: {
     color:'#EC407A',
     width: '70%',
-    height: '500px',
+    height: '400px',
     margin: 'auto',
     padding: '60px',
     background:'#B2DFDB',
   },
 };
-
 export default class Updateprofile extends React.Component
 {
  constructor()
  {
  super();
- this.state ={picture:"profile.png",allFiles: []};//,name :"",dob :"", gender:null,country:null,state:null,city:null,phone :null};
+ this.state ={picture:"profile.jpg",allFiles: []};
  }
-
+ componentWillMount() {
+   let th = this;
+   console.log(this.props.picture);
+   this.setState({
+     picture: th.props.picture
+   })
+ }
 checkForSuccessfullyUploadedAlert() {
-  //console.log("inside check for Successfully uploaded!!! alert");
   let context = this;
   this.refs.asd.success(
     'Photo uploaded successfully!!!',
@@ -40,11 +44,9 @@ checkForSuccessfullyUploadedAlert() {
 onImageDrop(files) {
      this.setState({allFiles: files[0],buttonDisable:false});
   }
-
 uploadImage()
 {
     let photo = new FormData();
-    //console.log("inside upload",this.state.allFiles)
     photo.append('IMG', this.state.allFiles);
     let self = this;
     request.post('/upload').send(photo).end(function(err, resp) {
@@ -56,7 +58,6 @@ uploadImage()
         }
     });
   }
-
     saveImage(image) {
       alert(image);
     let context = this;
@@ -69,24 +70,16 @@ uploadImage()
     }).then(function(response) {
       console.log(image);
       context.uploadSuccess(image);
-
-      //console.log(response);
+      context.props.changePicture(image);
     }).catch(function(err) {
-        //console.log(err);
     });
 }
-
-  // { if image uploaded successfully}
 uploadSuccess(imagenew)
 {
-  // this.setState({closeButton:false});
   alert("Successfully uploaded!!!");
-  //this.checkForSuccessfullyUploadedAlert();
   this.setState({picture:imagenew});
   console.log("imgnew:"+this.state.picture);
-
 }
-
 render()
 {
   const { active } = this.state;
@@ -101,29 +94,25 @@ render()
     console.log(this.state.statusInformation);
     if(this.state.allFiles.preview == undefined)
     {
-      //console.log("undefined");
-      imagechange = (<Image src={require("../../../pictures/"+pic)} style={{
-            height: 200,width: 200
+      imagechange = (<Image src={require("../../images/"+pic)} style={{
+            height: 200,width: 190
         }}/>);
-        //console.log(pic);
     }
     else{
-          //console.log("defined"+this.state.allFiles.preview);
           imagechange = (<Image src={this.state.allFiles.preview} style={{
-              height: 200,width:200
+              height: 200,width:190
           }}/>);
         }
          }
    else {
           imagechange = (
-           <Image src={require("../../../pictures/profile.png")}
+           <Image src={require("../../images/profile.jpg")}
                    size='large' style= {{
-                     height: 200,width:200
+                     height: 200,width:190
                  }}/>);
       }
 return(
   <Paper style={styles.paper}>
-
   <div>
       <br/>
       <b><i><center><p>Click on the image to change your profile image</p><br/></center></i></b>

@@ -39,24 +39,30 @@ const styles = {
     fontFamily: 'Roboto !important',
     fontSize:'120%',
     color:'grey',
+    overflow: 'visible'
   },
   col2:{
     textAlign: 'center',
     whiteSpace:'inherit',
     fontFamily: 'Roboto',
     fontSize:'120%',
-    color:'grey'
+    color:'grey',
+    overflow: 'visible',
   },
   col3:{
-    whiteSpace:'inherit',
     fontFamily: 'Roboto',
     fontSize:'110%',
-    textAlign:'right',
-    color:'grey'
+    color:'grey',
+    overflow: 'visible'
+  },
+  col4:{
+      overflow: 'visible',
+      paddingTop:'3%',
   },
   followBtn:{
-    marginLeft:'10%',
-    backgroundColor:tealA700,
+    overflow:'visible',
+    color:'black',
+    paddingTop:'2%',
     color:'grey'
   },
   submitbtn:{
@@ -73,11 +79,18 @@ const styles = {
   },
   badge:{
     marginTop:'5%',
-    padding: '14px 14px 4px 4px'
+    padding: '10px 10px 2px 2px'
+  },
+  unfollowBtn:{
+    overflow:'visible',
+    color:'grey',
+    paddingTop:'2%',
+    color:'grey'
   }
 };
 
 var user = cookies.get('displayname');
+var token = cookies.get('token');
 export default class Question extends React.Component {
   constructor(props) {
       super(props);
@@ -88,6 +101,7 @@ export default class Question extends React.Component {
         answers1:'',
         dialog:'',
         openAnswer: false,
+        openAnswer1:false,
         buttonStatus:true,
         displayAnswerCount:true,
         postButton:false,
@@ -97,10 +111,19 @@ export default class Question extends React.Component {
         user:null,
         firstletter:'',
         followSuccess:'',
+        postanswers:'',
+        token:null,
+        btnStatus:false
       };
 
     }
     componentWillMount(){
+
+      this.setState({token:token});
+      if(token != null){
+        this.setState({btnStatus:true});
+      }
+
     if((this.props.followCount)<=1){
       this.setState({follower:'follower'});
     }
@@ -129,7 +152,7 @@ export default class Question extends React.Component {
     var avatar = this.props.postedBy;
     var image = avatar.substring(0,1);
     this.setState({firstletter:image});
-
+/* to get the logstatus */
     var that = this;
     $.ajax({
       type:'GET',
@@ -149,29 +172,53 @@ export default class Question extends React.Component {
       error:function(err){
         alert("error");
       }
-    })
+    });
 
   }
-
+  /* to get the post answer alert*/
+  checkForPostAnswerAlert(){
+        this.props.toaster.info(
+          'Signin/SignUp to continue',
+        '', {
+          timeOut: 3000,
+          extendedTimeOut: 3000
+            }
+      );
+  }
+/*getting  post answer functionality*/
   postAnswer(){
     var qid = this.props.qid;
-    var answers = <Postanswer qid={qid}/>
-    this.setState({postButton:false});
-    this.setState({answers : answers});
+    if(this.state.token)
+    {
+      var answers = <Postanswer qid={qid}/>
+      this.setState({openAnswer1:true,postanswers : answers});
+    }
+    else {
+      this.checkForPostAnswerAlert();
+    }
+
   }
   checkForFetchErrorAlert() {
-      this.refs.asd.error(
-        'success while following',
+      this.props.toaster.error(
+        'No Answer Signin/SignUp to post answerNo Answer Signin/SignUp to post answer',
       '', {
         timeOut: 3000,
         extendedTimeOut: 3000
           }
     );
     }
+    checkForErrorPostAnswerAlert() {
+        this.props.toaster.error(
+          'No Answer Signin/SignUp to post answerNo Answer Signin/SignUp to post answer',
+        '', {
+          timeOut: 3000,
+          extendedTimeOut: 3000
+            }
+      );
+      }
 
   fetchAnswer(){
     var that =this;
-    that.setState({openAnswer:true});
     var qid = this.props.qid;
     $.ajax({
     url:'/answer/'+qid,
@@ -179,13 +226,17 @@ export default class Question extends React.Component {
     data:{},
     success:function(answers){
           var answers;
-          var answers1;
           if(answers == 'No answers!!!!!'){
-            answers = <Postanswer qid={qid}/>
-            that.setState({postButton:false});
+            if(that.state.token){
+                that.setState({openAnswer:true});
+                answers = <Postanswer qid={qid}/>
+            }
+            else{
+              that.checkForErrorPostAnswerAlert();
+            }
           }
           else{
-            that.setState({postButton:true,displayAnswer:true});
+            that.setState({postButton:true,displayAnswer:true,openAnswer:true});
             answers = answers.map((row,index)=> {
              return <IndividualQuestion answer={row.answer}  answered_by={row.answered_by} likes={row.likes} dislikes={row.dislikes} answerid={row.answerId} timestamp={row.time} key = {index}/>
            });
@@ -199,37 +250,47 @@ export default class Question extends React.Component {
   }
 
   handleClose(){
-    this.setState({openAnswer: false});
+    this.setState({openAnswer: false,openAnswer1: false});
   }
   checkForFollowSuccessAlert() {
-    this.refs.asd.success(
+    this.props.toaster.success(
       'successfully followed',
     '', {
       timeOut: 3000,
       extendedTimeOut: 3000
         }
   );
-  }
+}
+checkForFollowErrorAlert() {
+  this.props.toaster.error(
+    'Error while following',
+  '', {
+    timeOut: 3000,
+    extendedTimeOut: 3000
+      }
+);
+}
   followQuestion(){
     var that = this;
     var qid = this.props.qid;
-    var followup=that.props.followCount;
+    var followup=that.props.followCount+1;
     $.ajax({
       type:'POST',
       url:'/followQuestion/'+qid,
       data:{user:cookies.get('emailId')},
       success:function(data){
-          that.setState({followBtn:false,followups:that.props.followCount});
+          that.setState({followBtn:false,followups:that.props.followCount+1});
         //  alert("follow success");
        var FollowSuccess= that.checkForFollowSuccessAlert();
       },
       error:function(err){
-          alert(err);
+          thatcheckForFollowErrorAlert();
       }
       })
   }
   checkForUnFollowSuccessAlert() {
-    this.refs.asd.success(
+  this.props.toaster.success(
+
       'Successfully unfollowed',
     '', {
       timeOut: 3000,
@@ -238,7 +299,7 @@ export default class Question extends React.Component {
  );
 }
 checkForUnFollowErrorAlert() {
-  this.refs.asd.error(
+  this.props.toaste.error(
     'error while unfollowed',
   '', {
     timeOut: 3000,
@@ -249,17 +310,17 @@ checkForUnFollowErrorAlert() {
   unFollowQuestion(){
     var that = this;
     var qid = this.props.qid;
-    var unfollowdown=that.props.followCount-1;
+    var unfollowdown=that.props.followCount;
     $.ajax({
       type:'POST',
       url:'/unFollowQuestion/'+qid,
       data:{user:cookies.get('emailId')},
       success:function(data){
-          that.setState({followBtn:true,followups:that.props.followCount-1});
+          that.setState({followBtn:true,followups:that.props.followCount});
           that.checkForUnFollowSuccessAlert();
       },
       error:function(err){
-          alert(err);
+          that.checkForUnFollowErrorAlert();
       }
     });
   }
@@ -274,17 +335,14 @@ checkForUnFollowErrorAlert() {
         ];
     return(
       <div>
-        <ToastContainer ref='asd'
-          toastMessageFactory={ToastMessageFactory}
-          className='toast-top-center'/>
-    <Paper  zDepth={5} style={styles.paper}>
-      <Table style={{marginTop:'1%',marginBottom:'1%',}}>
-        <TableBody displayRowCheckbox={false} style={{paddingTop:'5%'}}>
-          <TableRow >
-          <TableRowColumn style={{width:'100%'}}>
-            <a className="question" onClick={this.fetchAnswer.bind(this)}><p>{this.props.question+'?'}</p></a>
-            <Dialog
-                actions={actions}
+
+            <Paper  zDepth={5} style={styles.paper}>
+              <Table style={{marginTop:'1%',marginBottom:'1%',}}>
+                <TableBody displayRowCheckbox={false} style={{paddingTop:'5%'}}>
+                  <TableRow style={{height:'50%'}}>
+                  <TableRowColumn style={{width:'100%',height:'auto',wordWrap:'break-word'}}>
+                    <a className="question" onClick={this.fetchAnswer.bind(this)}><p>{this.props.question+'?'}</p></a>
+                    <Dialog
                 modal={false}
                 open={this.state.openAnswer}
                 autoDetectWindowHeight={true}
@@ -292,15 +350,38 @@ checkForUnFollowErrorAlert() {
                 repositionOnUpdate={true}
                 onRequestClose={this.handleClose.bind(this)}
               >
+                <FloatingActionButton mini={true} onClick={this.handleClose.bind(this)} style={{float:'right',marginRight:'0%',marginTop:'0%'}}>
+                  <i className="material-icons">close</i>
+                </FloatingActionButton>
                 <h1><center><b><p className="individualquestion">{this.props.question}?</p></b></center></h1>
+
                 {this.state.answers}
-                {this.state.postButton?<Postanswer qid={this.props.qid}/>:''}
+
               </Dialog>
-
-
+              </TableRowColumn>
+              </TableRow>
+            <TableRow style={{height:'50%',float:'right',border:'0%'}}>
             <TableRowColumn colSpan="1" style={styles.col2}>
-            <IconButton tooltip="Answers" onClick={this.postAnswer.bind(this)}>
+              <IconButton style={{height:'10%'}} tooltip="Post Answer" tooltipPosition='top-center' onClick={this.postAnswer.bind(this)}>
             <i className="material-icons" style={{marginTop:'5%',cursor:'pointer'}} >create</i>
+            <Dialog
+                modal={false}
+                open={this.state.openAnswer1}
+                autoDetectWindowHeight={true}
+                autoScrollBodyContent={true}
+                repositionOnUpdate={true}
+                onRequestClose={this.handleClose.bind(this)}
+                bodyStyle={{ backgroundColor: 'rgba(0,0,0,0.58)' }}
+                contentStyle={{ backgroundColor: 'rgba(0,0,0,0.58)' }}
+                titleStyle={{ backgroundColor: 'rgba(0,0,0,0.58)' }}
+                overlaystyle={{backgroundColor: 'transparent'}}
+              >
+                <FloatingActionButton mini={true} onClick={this.handleClose.bind(this)} style={{float:'right',marginRight:'0%',marginTop:'0%'}}>
+                  <i className="material-icons">close</i>
+                </FloatingActionButton>
+            <h3><center><b><p className="individualquestion">{this.props.question}?</p></b></center></h3>
+            {this.state.postanswers}
+            </Dialog>
               </IconButton>
             </TableRowColumn>
 
@@ -310,34 +391,26 @@ checkForUnFollowErrorAlert() {
                   primary={true}
                   style={styles.badge}
                 >
-                <IconButton tooltip="Followers">
+                <IconButton tooltip="Followers" tooltipPosition='top-center'>
                   <i className="material-icons md-48">people</i>
-                  </IconButton>
-
+                </IconButton>
                 </Badge>
                  </TableRowColumn>
-
-
-
-              <TableRowColumn colSpan="2" >
-             {this.state.button?(this.state.followBtn?<RaisedButton  primary={true} style={styles.followBtn} onClick={this.followQuestion.bind(this)}>
-                   Follow
-                </RaisedButton>:
-                <RaisedButton  primary={true} style={styles.followBtn} onClick={this.unFollowQuestion.bind(this)}>
-                   Unfollow
-                </RaisedButton>):''}
+              <TableRowColumn colSpan="2" style={styles.col4}>
+             {this.state.button?(this.state.followBtn?<IconButton tooltip="Click to follow" tooltipPosition='top-center' style={styles.followBtn} onClick={this.followQuestion.bind(this)}> <i className="material-icons md-48">person_add</i></IconButton>
+              :<IconButton tooltip="Unfollow" tooltipPosition='top-center' style={styles.unfollowBtn} onClick={this.unFollowQuestion.bind(this)}> <i className="material-icons md-48">person_add</i></IconButton>):''}
               </TableRowColumn>
 
-              <TableRowColumn colSpan="6" style={styles.col3}>-asked  <Moment fromNow>{(this.props.timestamp).toString()}</Moment>   by
-                <Chip
-                >
+              <TableRowColumn colSpan="6" style={styles.col3}>
+                <p style={{float:'left',paddingTop:'1%',paddingRight:'1%'}}>Asked  <Moment fromNow>{(this.props.timestamp).toString()}</Moment>   by   </p>
+                <Chip style={{marginLeft:'50%'}}>
                   <Avatar size={32} color={grey50} backgroundColor={grey900}>
                   {this.state.firstletter}
                   </Avatar>
                   {this.props.postedBy}
                 </Chip>
               </TableRowColumn>
-          </TableRowColumn>
+
 
 
           {/* <TableRowColumn colSpan="2" style={styles.col2}><a onClick={this.postAnswer.bind(this)}>Post your answer</a>

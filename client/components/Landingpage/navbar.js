@@ -1,18 +1,20 @@
 import React from 'react';
 import './landingpage.css';
 import '../ReactLandingpage/reactlandingpage.css';
-import Defaultimg from './../../images/default_profile.jpg';
+//import Defaultimg from './../../images/default_profile.jpg';
 import {Link,Redirect} from 'react-router-dom';
 import Updateprofile from './../Updateprofile/Updateprofile.js';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import IndividualQuestion from '../ReactLandingpage/individualquestion.js';
-import AskQuestion from '../ReactLandingpage/texteditor.js'
+import AskQuestion from '../ReactLandingpage/texteditor.js';
+import Postanswer from '../ReactLandingpage/postAnswer.js';
 import Dialog from 'material-ui/Dialog';
 import Cookies from 'universal-cookie';
 const ReactToastr = require('react-toastr');
 const {ToastContainer} = ReactToastr;
 const ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage.animation);
 const cookies = new Cookies();
+  var token = cookies.get('token');
 
 class Navbar extends React.Component {
 
@@ -29,9 +31,21 @@ class Navbar extends React.Component {
         loginStatus:'',
         openAnswer: false,
         answers:'',
-        openAskQuestion:false
+        openAskQuestion:false,
+        token:null,
+        btnStatus:false,
+        picture: 'profile.jpg'
       }
+      this.getallData = this.getallData.bind(this);
+      this.changePicture = this.changePicture.bind(this);
     };
+
+    componentWillMount(){
+      this.setState({token:token});
+      if(token != null){
+        this.setState({btnStatus:true});
+      }
+    }
 
     handleClose(){
       this.setState({openAnswer: false,openAskQuestion:false,openprofile: false});
@@ -111,23 +125,23 @@ class Navbar extends React.Component {
 
 
   /*ajax call for signupFacebook routes*/
-    signUpFacebook(){
-      $.ajax({
-        url:'/users/signupFacebook',
-        type: 'POST',
-        success: function(response) {
-            if(response.status == 'signup success'){
-              alert("Successfully registered!!!Please login to visit the site")
-            }
-            else{
-              alert("User already exists!!!");
-            }
-        },
-        error: function(err) {
-            alert("Registration failed!!Try again....");
-        }
-      })
-    }
+    // signUpFacebook(){
+    //   $.ajax({
+    //     url:'/users/signupFacebook',
+    //     type: 'POST',
+    //     success: function(response) {
+    //         if(response.status == 'signup success'){
+    //           alert("Successfully registered!!!Please login to visit the site")
+    //         }
+    //         else{
+    //           alert("User already exists!!!");
+    //         }
+    //     },
+    //     error: function(err) {
+    //         alert("Registration failed!!Try again....");
+    //     }
+    //   })
+    // }
     checkForInvalidCredentialsAlert() {
         this.refs.asd.error(
           'Provise valid credentials',
@@ -147,7 +161,7 @@ class Navbar extends React.Component {
         );
         }
         checkForSuccessfullyLoggedAlert() {
-            this.refs.asd.error(
+            this.refs.asd.success(
               'Successfully logged!!!',
             '', {
               timeOut: 3000,
@@ -180,14 +194,16 @@ class Navbar extends React.Component {
             }
             else{
               that.setState({logStatus:true});
+              //console.log(response.user.firstname);
               var displayname = response.user.firstname+" "+response.user.lastname;
               var emailId = that.state.username;
               var token = response.token;
               cookies.set('displayname', displayname);
-              cookies.set('emailId',emailId);
+                  cookies.set('emailId',emailId);
               cookies.set('token',token);
-              localStorage.setItem('token',token);
-          that.checkForSuccessfullyLoggedAlert();
+              //localStorage.setItem('token',token);
+              that.checkForSuccessfullyLoggedAlert();
+              that.getallData();
             }
         },
         error: function(err) {
@@ -204,9 +220,44 @@ class Navbar extends React.Component {
             }
       );
       }
+
+      checkForAskQuestionAlert(){
+            this.refs.asd.info(
+              'Signin/SignUp to continue',
+            '', {
+              timeOut: 2000,
+              extendedTimeOut: 2000
+                }
+          );
+      }
+
+      checkForEmptyValues(){
+            this.refs.asd.info(
+              'Enter your question to search',
+            '', {
+              timeOut: 3000,
+              extendedTimeOut: 3000
+                }
+          );
+      }
+      checkForNoAnswerForQuestionValues(){
+            this.refs.asd.error(
+              'No answer for this question,Signin/SignUp to post answer',
+            '', {
+              timeOut: 2000,
+              extendedTimeOut: 2000
+                }
+          );
+      }
+
+
     search(){
       var that = this;
-      that.setState({openAnswer:true});
+      if(that.state.searchValue == '' ){
+        that.checkForEmptyValues();
+        //alert("Enter the question");
+      }
+      else{
       $.ajax({
         url:'/search',
         type: 'POST',
@@ -214,23 +265,41 @@ class Navbar extends React.Component {
         success: function(answers) {
           var answers;
           if(answers == 'No answers!!!!!'){
-            answers = 'No answers!!!!!'
+            if(that.state.token){
+              console.log("----------"+token);
+              that.setState({openAnswer:true});
+              //var qid=this.props.questionId
+              answers = <Postanswer qid={qid}/>
+            }
+            else{
+              that.checkForNoAnswerForQuestionValues();
+            }
           }
           else{
+            that.setState({openAnswer:true});
             answers = answers.map((row,index)=> {
-             return <IndividualQuestion answer={row.answer} answered_by={row.answered_by} likes={row.likes} dislikes={row.dislikes} timestamp={row.time} key = {index}/>
+             return <IndividualQuestion answer={row.answer} answered_by={row.answered_by} likes={row.likes} dislikes={row.dislikes} timestamp={row.time}  key = {index}/>
            });
          }
          that.setState({answers : answers});
         },
         error: function(err) {
+          //alert("Signin/SignUp to continue");
           that.checkForFailedSearchAlert();
         }
       })
     }
+    }
 
     askQuestion(){
-        this.setState({openAskQuestion:true})
+      console.log(token);
+        if(this.state.token)
+        {
+          this.setState({openAskQuestion:true})
+        }
+        else {
+          this.checkForAskQuestionAlert();
+        }
     }
     checkForFailedLogout() {
         this.refs.asd.error(
@@ -251,13 +320,40 @@ class Navbar extends React.Component {
                        cookies.remove('displayname');
                        cookies.remove('emailId');
                        cookies.remove('token');
-                       localStorage.removeItem('token');
+                       //localStorage.removeItem('token');
                        location.reload();
                    },
                    error:function(err){
                     that.checkForFailedLogout();
                    }
               });
+    }
+    getallData() {
+    let context = this;
+   //console.log(this.state.username);
+   //alert("getalldate");
+      $.ajax({
+          url:'/view',
+          type:'POST',
+          data:{name: cookies.get('emailId')},
+          datatype:'json',
+          success:function(data){
+           //alert(JSON.stringify(data));
+           if(data[0].picture == '' ){
+             context.setState({picture:'profile.jpg'});
+           }
+           else{
+             //console.log(data[0].picture+'my image');
+             context.setState({picture:data[0].picture});
+           }
+              },
+              error: function(err){
+     }});
+  }
+  changePicture(picture) {
+      this.setState({
+        picture: picture
+      })
     }
 
 render(){
@@ -269,6 +365,9 @@ render(){
   return(
 
 <div className="row ">
+  <ToastContainer ref='asd'
+    toastMessageFactory={ToastMessageFactory}
+    className='toast-top-center'/>
  <div className="col-xs-6 col-md-12">
     <header className="header-tp">
        <nav className="navbar navbar-default navbar-static-top">
@@ -280,18 +379,17 @@ render(){
                 <span className="icon-bar"></span>
                 <span className="icon-bar"></span>
                 </button>
-                <img className="qaimage" src="../../images/answer.png"/>
+                <p className="qaimage">Quest</p>
              </div>
 
               <div id="navbar" className="navbar-collapse collapse ">
                <div className=" col-sm-8 col-md-4 ">
 
                <div className="input-group " style={{marginTop:'4%',marginLeft:'15%'}}>
-                   <input type="text" className="form-control search" placeholder="Search"  onChange={this.changeSearchValue.bind(this)}/>
+                   <input type="text" className="form-control search" placeholder="Search your question"  onChange={this.changeSearchValue.bind(this)}/>
                    <div className="input-group-btn">
                        <button className="btn btn-default searchBtn"  onClick={this.search.bind(this)}><i className="glyphicon glyphicon-search"></i>
                        <Dialog
-                           actions={actions}
                            modal={false}
                            open={this.state.openAnswer}
                            autoDetectWindowHeight={true}
@@ -299,6 +397,9 @@ render(){
                            repositionOnUpdate={true}
                            onRequestClose={this.handleClose.bind(this)}
                          >
+                           <FloatingActionButton mini={true} onClick={this.handleClose.bind(this)} style={{float:'right',marginRight:'0%',marginTop:'0%'}}>
+                             <i className="material-icons">close</i>
+                           </FloatingActionButton>
                            <h1><center><b><p className="individualquestion">{this.state.searchValue}?</p></b></center></h1>
                            {this.state.answers}
                          </Dialog>
@@ -311,10 +412,8 @@ render(){
 
 
                <div className=" col-sm-8 col-md-2 askbtn ">
-
                  <button type="button" className=" btn btn-round-lg btn-sm  btnColor" onClick={this.askQuestion.bind(this)}>Ask Question <i className="fa fa-question" aria-hidden="true"></i>
                    <Dialog
-                       actions={actions}
                        modal={false}
                        open={this.state.openAskQuestion}
                        autoDetectWindowHeight={true}
@@ -322,6 +421,9 @@ render(){
                        repositionOnUpdate={true}
                        onRequestClose={this.handleClose.bind(this)}
                      >
+                       <FloatingActionButton mini={true} onClick={this.handleClose.bind(this)} style={{float:'right',marginRight:'0%',marginTop:'0%'}}>
+                         <i className="material-icons">close</i>
+                       </FloatingActionButton>
                        <AskQuestion/>
                      </Dialog>
                  </button>
@@ -332,7 +434,7 @@ render(){
                        <li className='username'><p><b><i>{cookies.get('displayname')}</i></b></p></li>
                        <li className="dropdown">
                          <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                         <img className="inset" src={Defaultimg}/>
+                         <img className="inset" src={"../../images/"+this.state.picture}/>
                           </a>
                          <ul className="dropdown-menu" role="menu">
                            <li><a data-toggle="modal" data-target="#profile" onClick={this.Update.bind(this)}><i className="fa fa-user"></i> Profile</a></li>
@@ -345,7 +447,7 @@ render(){
                              repositionOnUpdate={true}
                               onRequestClose={this.handleClose.bind(this)}
                             >
-                            <Updateprofile/>
+                             <Updateprofile picture={this.state.picture} changePicture={this.changePicture}/>
                             </Dialog>
                            <li className="divider"></li>
                            <li><a href="#" onClick={this.logout.bind(this)}><span className="fa fa-power-off" ></span> Log Out</a></li>
@@ -372,14 +474,7 @@ render(){
                 <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
              </div>
              <div className="modal-body">
-                <button className="btn-fb"> <i className="fa fa-fw fa-facebook pull-left" aria-hidden="true"></i>
-                Login with Facebook	</button> <br/>
-                <button className="btn-gp"> <i className="fa fa-fw fa-google-plus pull-left" aria-hidden="true"></i>
-                Login with Google	</button> <br/>
-                <div className="signup-or-separator">
-                   <span className="h6 signup-or-separator--text">or</span>
-                   <hr/>
-                </div>
+                <h2 style={{marginLeft:'80px',marginBottom:'50px',fontFamily:'Roboto'}}> Welcome to Login Page</h2>
                 <form>
                    <div >
                       <input type="email" className="form-control-form " id="exampleInputEmaillog" placeholder="Email" required onChange={this.changeEmail.bind(this)}/>
@@ -412,15 +507,8 @@ render(){
                 <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
              </div>
              <div className="modal-body">
-                <button className="btn-fb"> <i className="fa fa-fw fa-facebook pull-left" aria-hidden="true"></i>
-                Signup with Facebook	</button> <br/>
-                <button className="btn-gp" onClick={this.signUpFacebook.bind(this)}> <i className="fa fa-fw fa-google-plus pull-left" aria-hidden="true"></i>
-                Signup with Google	</button> <br/>
-                <div className="signup-or-separator">
-                   <span className="h6 signup-or-separator--text">or</span>
-                   <hr/>
-                </div>
-                <button type="submit" className="btn-lgin" data-toggle="modal"  data-dismiss="modal" data-target="#at-signup-filling" >Signup with Email</button>
+
+                <button type="submit" className="btn-lgin" data-toggle="modal"  data-dismiss="modal" data-target="#at-signup-filling" >Signup with EmailID</button>
              </div>
              <div className="modal-footer">
                 <div className="row">
@@ -443,11 +531,7 @@ render(){
                 <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
              </div>
              <div className="modal-body">
-                <p>Sign up with <a href="#">Facebook</a>  or <a href="#">Google</a></p>
-                <div className="signup-or-separator">
-                   <span className="h6 signup-or-separator--text">or</span>
-                   <hr/>
-                </div>
+
                 <form onSubmit={this.signUp.bind(this)}>
                    <div className="form-group">
                       <input type="text" className="form-control-form " id="exampleInputEmaillog" placeholder="First Name" onChange={this.changeFirstname.bind(this)} required/>

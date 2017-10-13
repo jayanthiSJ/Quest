@@ -1,7 +1,7 @@
 .qaimage{
-  height: 100px;
-  width: 120px;
-  margin: 0px;
+  padding-top:20%;
+  font-size:250%;
+  font-weight: bolder;
 }
 .bg-image{
   background-image: url("./../../images/best.jpg");

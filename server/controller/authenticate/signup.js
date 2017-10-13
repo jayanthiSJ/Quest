@@ -19,7 +19,7 @@ module.exports = function(passport){
                 var newUser = new UserModel();
                 //set the user's credentials
                 newUser.firstname = req.body.firstname;
-								newUser.lastname = req.body.lastname;
+				newUser.lastname = req.body.lastname;
                 newUser.password = password;
                 newUser.username = username;
                 //saving into databases

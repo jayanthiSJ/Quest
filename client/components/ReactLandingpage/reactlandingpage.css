@@ -14,16 +14,17 @@
   margin-top:7px;
 }
  .btnColor{
-   background-color: #990000;
-   color:white;
-    width: 120px;
-    height:70px`;
+   background-color: #00BCD4;
+    color:white;
+    width: 150px;
+    height:80px`;
     margin-left: 110px;
     margin-top:8px;
+    font-size:130%;
  }
 
  .btnColor a:focus{
-   font-color:white;
+   color:white;
  }
 .inset img {
   border-radius: inherit;
@@ -122,10 +123,11 @@
 }
 
 .voteCnt{
-  margin:1%;
+  margin-left:54%;
   font-weight: bold;
   font-size: 180%;
   font-family: 'Roboto';
+
 }
 
 .answers{
@@ -155,18 +157,29 @@
   color:black;
   width: 11em;
   word-wrap: break-word  !important;
+  text-decoration-color:#404040 !important;
+  overflow:visible;
+   /*text-decoration-style:initial;
+    border-bottom: '30px solid red';*/
 }
+
+/*.question a:hover{
+    border-bottom: 10px solid red;
+}*/
 
 a:hover{
   color:black;
   cursor:pointer;
-  
+
 }
 
 .individualquestion{
   font-Family: 'Roboto';
   font-size:90%;
   text-decoration: none;
+
+  font-weight: bolder;
+
 }
 
 .question p::first-letter{

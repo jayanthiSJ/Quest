@@ -5,6 +5,9 @@ import IndividualQuestion from '../ReactLandingpage/individualquestion.js';
 import Dialog from 'material-ui/Dialog';
 import $ from 'jquery';
 import Cookies from 'universal-cookie';
+const ReactToastr = require('react-toastr');
+const {ToastContainer} = ReactToastr;
+const ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage.animation);
 
 const cookies = new Cookies();
 var token = cookies.get('token');
@@ -47,8 +50,24 @@ class Editor extends React.Component {
     descriptionChange(e){
       this.setState({description:e.target.value});
     }
+
+    checkForQuestionSuccessAlert(){
+      this.refs.asd.success(
+        'successfully followed',
+      '', {
+        timeOut: 3000,
+        extendedTimeOut: 3000
+          }
+    );
+    }
+
     postQuestion(){
       var that = this;
+      if(that.state.description == '' ){
+        that.checkForQuestionSuccessAlert();
+          alert("Fillout the description");
+      }
+      else{
       $.ajax({
                url: '/question',
                type: 'POST',
@@ -76,26 +95,22 @@ class Editor extends React.Component {
                    alert(err);
                }
            })
+         }
     }
     render() {
-      const actions = [
-            <FloatingActionButton mini={true} onClick={this.handleClose.bind(this)} style={{align:'center'}}>
-              <i className="material-icons">close</i>
-            </FloatingActionButton>
-          ];
         return (
           <div className="text">
+
           <div className="form-group">
             <label for="usr">Title</label>
             <input type="text" className="form-control" id="usr" onChange={this.titleChange.bind(this)}/>
           </div>
           <div className="form-group">
-            <label for="exampleTextarea">Description</label>
-            <textarea className="form-control" id="exampleTextarea" rows="13" onChange={this.descriptionChange.bind(this)}></textarea>
+            <label for="exampleTextarea">Question</label>
+            <textarea className="form-control" id="exampleTextarea" rows="6" placeholder="Write your question here...." onChange={this.descriptionChange.bind(this)}></textarea>
           </div>
         { this.state.token ?  <RaisedButton  primary={true} style={styles.submitbtn} onClick={this.postQuestion.bind(this)}>Post your question
           <Dialog
-             actions={actions}
               modal={false}
               open={this.state.openAnswer}
               onRequestClose={this.handleClose.bind(this)}
