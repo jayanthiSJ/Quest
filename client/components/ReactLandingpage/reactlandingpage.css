@@ -135,7 +135,7 @@
   font-family: 'Roboto';
 }
 .text{
-  margin-top:5%;
+  margin-top:1%;
   margin-right:5%;
   margin-left:5%;
   padding-right:5%;
@@ -159,13 +159,7 @@
   word-wrap: break-word  !important;
   text-decoration-color:#404040 !important;
   overflow:visible;
-   /*text-decoration-style:initial;
-    border-bottom: '30px solid red';*/
 }
-
-/*.question a:hover{
-    border-bottom: 10px solid red;
-}*/
 
 a:hover{
   color:black;
@@ -175,11 +169,12 @@ a:hover{
 
 .individualquestion{
   font-Family: 'Roboto';
-  font-size:90%;
+  font-size:70%;
   text-decoration: none;
-
+  word-wrap: break-word  !important;
+  white-space: normal;
   font-weight: bolder;
-
+  color:black;
 }
 
 .question p::first-letter{

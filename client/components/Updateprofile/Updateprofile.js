@@ -6,6 +6,9 @@ import request from 'superagent';
 import {path} from 'path';
 import Cookies from 'universal-cookie';
 const cookies = new Cookies();
+const ReactToastr = require('react-toastr');
+const {ToastContainer} = ReactToastr;
+const ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage.animation);
 var user = cookies.get('emailId');
 const styles = {
   paper: {
@@ -25,15 +28,14 @@ export default class Updateprofile extends React.Component
  this.state ={picture:"profile.jpg",allFiles: []};
  }
  componentWillMount() {
-   let th = this;
-   console.log(this.props.picture);
+   let that = this;
    this.setState({
-     picture: th.props.picture
+     picture: that.props.picture
    })
  }
 checkForSuccessfullyUploadedAlert() {
-  let context = this;
-  this.refs.asd.success(
+  let that = this;
+  that.refs.asd.success(
     'Photo uploaded successfully!!!',
     '', {
     timeOut: 3000,
@@ -48,19 +50,17 @@ uploadImage()
 {
     let photo = new FormData();
     photo.append('IMG', this.state.allFiles);
-    let self = this;
+    let that = this;
     request.post('/upload').send(photo).end(function(err, resp) {
         if (err) {
             console.error(err);
         } else {
-          console.log(resp.text);
-          self.saveImage(resp.text);
+          that.saveImage(resp.text);
         }
     });
   }
     saveImage(image) {
-      alert(image);
-    let context = this;
+    let that = this;
     $.ajax({
         method: 'POST',
         url: '/uploadImage',
@@ -68,17 +68,15 @@ uploadImage()
             picture: image, name: cookies.get('emailId')
         }
     }).then(function(response) {
-      console.log(image);
-      context.uploadSuccess(image);
-      context.props.changePicture(image);
+      that.uploadSuccess(image);
+      that.props.changePicture(image);
     }).catch(function(err) {
     });
 }
 uploadSuccess(imagenew)
 {
-  alert("Successfully uploaded!!!");
+  this.checkForSuccessfullyUploadedAlert();
   this.setState({picture:imagenew});
-  console.log("imgnew:"+this.state.picture);
 }
 render()
 {
@@ -86,12 +84,8 @@ render()
     let imagechange = null;
     let context = this;
     let pic=this.state.picture;
-    console.log("picture::::"+pic)
-    console.log(this.state.statusInformation);
     if(this.state.picture!='')
     {
-    console.log("picture::::"+pic);
-    console.log(this.state.statusInformation);
     if(this.state.allFiles.preview == undefined)
     {
       imagechange = (<Image src={require("../../images/"+pic)} style={{
@@ -114,6 +108,9 @@ render()
 return(
   <Paper style={styles.paper}>
   <div>
+  <ToastContainer ref="asd"
+    toastMessageFactory={ToastMessageFactory}
+    className='toast-top-center'/>
       <br/>
       <b><i><center><p>Click on the image to change your profile image</p><br/></center></i></b>
       <center>

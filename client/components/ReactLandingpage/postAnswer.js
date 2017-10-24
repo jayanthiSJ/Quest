@@ -53,7 +53,7 @@ export default class Postanswer extends React.Component {
       that.setState({openEditor:true});
     }
     checkForPostAnswerAlert(){
-          this.props.toaster.info(
+          this.refs.toasterContainer.info(
             'Signin/SignUp to continue',
           '', {
             timeOut: 3000,
@@ -62,8 +62,18 @@ export default class Postanswer extends React.Component {
         );
     }
 
+    checkForPostAnswerSuccess(){
+          this.refs.toasterContainer.success(
+            'Posted successfully',
+          '', {
+            timeOut: 3000,
+            extendedTimeOut: 3000
+              }
+        );
+    }
+
     checkForFillPostAnswerAlert(){
-          this.props.toaster.info(
+          this.refs.toasterContainer.info(
             'Fillout some Answer',
           '', {
             timeOut: 3000,
@@ -74,9 +84,7 @@ export default class Postanswer extends React.Component {
 
     postAnswer(){
       var that =this;
-      alert("answer:"+that.state.newAnswer);
       if(that.state.newAnswer == '' ){
-        //alert("Fillout your answer");
         that.checkForFillPostAnswerAlert()
       }
       else{
@@ -86,9 +94,8 @@ export default class Postanswer extends React.Component {
           url:'/answer/'+qid,
           data:{user:cookies.get('emailId'),answer:that.state.newAnswer,time:new Date()},
           success:function(data){
-              that.setState({openEditor: false});
-              that.checkForPostAnswerAlert()
-              //alert(qid);
+            //alert("Success");
+            that.checkForPostAnswerSuccess();
           },
           error:function(err){
               alert(err);
@@ -106,6 +113,9 @@ export default class Postanswer extends React.Component {
           ];
       return(
           <div>
+          <ToastContainer ref="toasterContainer"
+            toastMessageFactory={ToastMessageFactory}
+            className='toast-top-center'/>
             {!(this.state.logStatus)?<div className="text">
               <div className="form-group">
                 <label for="exampleTextarea" style={{color:'white'}}>Answer</label>

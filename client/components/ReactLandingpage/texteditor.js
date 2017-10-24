@@ -53,7 +53,17 @@ class Editor extends React.Component {
 
     checkForQuestionSuccessAlert(){
       this.refs.asd.success(
-        'successfully followed',
+        'Successfully followed',
+      '', {
+        timeOut: 3000,
+        extendedTimeOut: 3000
+          }
+    );
+    }
+
+    checkForPostQuestionSuccessAlert(){
+      this.refs.asd.success(
+        'Successfully posted',
       '', {
         timeOut: 3000,
         extendedTimeOut: 3000
@@ -80,7 +90,7 @@ class Editor extends React.Component {
                success: function(response) {
                    if(response == "Question posted"){
                      that.setState({openAnswer: false});
-                     alert("Posted succesfully");
+                     that.checkForPostQuestionSuccessAlert();
                    }
                    else{
                      that.setState({openAnswer: true});
@@ -100,10 +110,12 @@ class Editor extends React.Component {
     render() {
         return (
           <div className="text">
-
+          <ToastContainer ref="asd"
+            toastMessageFactory={ToastMessageFactory}
+            className='toast-top-center'/>
           <div className="form-group">
             <label for="usr">Title</label>
-            <input type="text" className="form-control" id="usr" onChange={this.titleChange.bind(this)}/>
+            <input type="text" className="form-control" placeholder="Enter your title...(Eg:React,jsx,dom)" id="usr" onChange={this.titleChange.bind(this)}/>
           </div>
           <div className="form-group">
             <label for="exampleTextarea">Question</label>

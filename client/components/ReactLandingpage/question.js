@@ -190,7 +190,7 @@ export default class Question extends React.Component {
     var qid = this.props.qid;
     if(this.state.token)
     {
-      var answers = <Postanswer qid={qid}/>
+      var answers = <Postanswer qid={qid} />
       this.setState({openAnswer1:true,postanswers : answers});
     }
     else {
@@ -200,7 +200,7 @@ export default class Question extends React.Component {
   }
   checkForFetchErrorAlert() {
       this.props.toaster.error(
-        'No Answer Signin/SignUp to post answerNo Answer Signin/SignUp to post answer',
+        'No Answers.',
       '', {
         timeOut: 3000,
         extendedTimeOut: 3000
@@ -209,7 +209,7 @@ export default class Question extends React.Component {
     }
     checkForErrorPostAnswerAlert() {
         this.props.toaster.error(
-          'No Answer Signin/SignUp to post answerNo Answer Signin/SignUp to post answer',
+          'No Answers.',
         '', {
           timeOut: 3000,
           extendedTimeOut: 3000
@@ -254,7 +254,7 @@ export default class Question extends React.Component {
   }
   checkForFollowSuccessAlert() {
     this.props.toaster.success(
-      'successfully followed',
+      'Successfully followed',
     '', {
       timeOut: 3000,
       extendedTimeOut: 3000
@@ -327,7 +327,6 @@ checkForUnFollowErrorAlert() {
 
 
   render(){
-
     const actions = [
           <FloatingActionButton mini={true} onClick={this.handleClose.bind(this)} style={{align:'center'}}>
             <i className="material-icons">close</i>
@@ -340,7 +339,7 @@ checkForUnFollowErrorAlert() {
               <Table style={{marginTop:'1%',marginBottom:'1%',}}>
                 <TableBody displayRowCheckbox={false} style={{paddingTop:'5%'}}>
                   <TableRow style={{height:'50%'}}>
-                  <TableRowColumn style={{width:'100%',height:'auto',wordWrap:'break-word'}}>
+                  <TableRowColumn style={{width:'100%',height:'auto',wordWrap:'break-word', whiteSpace: 'normal'}}>
                     <a className="question" onClick={this.fetchAnswer.bind(this)}><p>{this.props.question+'?'}</p></a>
                     <Dialog
                 modal={false}
@@ -354,7 +353,6 @@ checkForUnFollowErrorAlert() {
                   <i className="material-icons">close</i>
                 </FloatingActionButton>
                 <h1><center><b><p className="individualquestion">{this.props.question}?</p></b></center></h1>
-
                 {this.state.answers}
 
               </Dialog>

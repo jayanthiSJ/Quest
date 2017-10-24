@@ -38,7 +38,7 @@ render(){
                         <li><i className="fa fa-instagram  fai fa-lg"></i></li>
                         <li><i className="fa fa-youtube fay fa-lg"></i></li>
 
-                       <p class="pull-right">Copyright 2017 © Quoser Pvt. Ltd.</p>
+                       <p class="pull-right">Copyright 2017 © Quest Pvt. Ltd.</p>
                       </ul>
 
   </div>

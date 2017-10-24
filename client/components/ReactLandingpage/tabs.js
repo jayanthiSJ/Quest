@@ -13,6 +13,7 @@ const {ToastContainer,ToastMessage} = ReactToastr;
 const ToastMessageFactory = React.createFactory(ToastMessage.animation);
 import Question from './question.js';
 import Editor from './texteditor.js';
+import Postanswer from './postAnswer.js';
 import './reactlandingpage.css';
 import Cookies from 'universal-cookie';
 
@@ -53,7 +54,7 @@ class Questiontabs extends React.Component {
         followCount:''
       };
     }
-/* topQuestions in componentWillMount*/
+    /* topQuestions in componentWillMount*/
     componentWillMount(){
       var that=this;
       //let token = localStorage.getItem('token');
@@ -82,7 +83,7 @@ class Questiontabs extends React.Component {
         slideIndex: value
       });
     }
-/*  getting topQuestions*/
+    /*getting topQuestions*/
         getTopQuestions(){
           var that=this;
           var name = 'topquestions';
@@ -101,19 +102,15 @@ class Questiontabs extends React.Component {
                }
              });
          }
-/*getting latestquestions*/
+         /*getting latestquestions*/
          getLatestQuestions(){
            var that=this;
            var name = 'latestquestions';
-
               $.ajax({
-
                 type:'GET',
                 url:'/question/'+name,
                 data:{},
-
                  success:function(data){
-
                    var  latestQuestions = data.map((row,index)=> {
                   return <Question name="latestquestions" toaster={that.refs.toasterContainer} question = {row.question} followCount={row.followcount} postedBy={row.postedBy} timestamp={row.time} answerCount={row.answercount} qid={row.questionid}  key = {index}/>
                 });
@@ -125,15 +122,15 @@ class Questiontabs extends React.Component {
         });
           }
 
-checkForInfoYourQuestion() {
-        this.props.toaster.error(
-          'Post Question to view your Question',
-        '', {
-          timeOut: 3000,
-          extendedTimeOut: 3000
-            }
-      );
-      }
+    checkForInfoYourQuestion() {
+            this.props.toaster.error(
+              'Post Question to view your Question',
+            '', {
+              timeOut: 3000,
+              extendedTimeOut: 3000
+                }
+          );
+          }
 
    checkForErrorYourQuestion() {
         this.props.toaster.error(

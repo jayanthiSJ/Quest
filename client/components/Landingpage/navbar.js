@@ -25,6 +25,7 @@ class Navbar extends React.Component {
         lastname:'',
         username:'',
         password:'',
+        displayname:'',
         searchValue:'',
         logStatus:false,
         logout:false,
@@ -171,7 +172,7 @@ class Navbar extends React.Component {
           }
           checkForFailedLoggedAlert() {
               this.refs.asd.error(
-                ' login Failed!!!',
+                ' Login Failed!!!',
               '', {
                 timeOut: 3000,
                 extendedTimeOut: 3000
@@ -194,14 +195,13 @@ class Navbar extends React.Component {
             }
             else{
               that.setState({logStatus:true});
-              //console.log(response.user.firstname);
               var displayname = response.user.firstname+" "+response.user.lastname;
               var emailId = that.state.username;
               var token = response.token;
               cookies.set('displayname', displayname);
-                  cookies.set('emailId',emailId);
+              that.setState({displayname:displayname});
+              cookies.set('emailId',emailId);
               cookies.set('token',token);
-              //localStorage.setItem('token',token);
               that.checkForSuccessfullyLoggedAlert();
               that.getallData();
             }
@@ -264,12 +264,16 @@ class Navbar extends React.Component {
         data:{searchValue:that.state.searchValue},
         success: function(answers) {
           var answers;
-          if(answers == 'No answers!!!!!'){
+          console.log(answers);
+          console.log(answers.length);
+          console.log(answers[0].status);
+          if(answers[0].status == 'No answers'){
             if(that.state.token){
               console.log("----------"+token);
               that.setState({openAnswer:true});
-              //var qid=this.props.questionId
-              answers = <Postanswer qid={qid}/>
+              var qid=answers[0].questionId;
+              console.log(qid);
+              answers = <Postanswer toaster={that.refs.toasterContainer} qid={qid}/>
             }
             else{
               that.checkForNoAnswerForQuestionValues();
@@ -329,26 +333,27 @@ class Navbar extends React.Component {
               });
     }
     getallData() {
-    let context = this;
-   //console.log(this.state.username);
-   //alert("getalldate");
+    let that = this;
       $.ajax({
           url:'/view',
           type:'POST',
           data:{name: cookies.get('emailId')},
           datatype:'json',
           success:function(data){
-           //alert(JSON.stringify(data));
+          alert(JSON.stringify(data));
+          var displayname = data[0].firstname+" "+data[0].lastname;
            if(data[0].picture == '' ){
-             context.setState({picture:'profile.jpg'});
+             that.setState({picture:'profile.jpg'});
            }
            else{
-             //console.log(data[0].picture+'my image');
-             context.setState({picture:data[0].picture});
+             that.setState({picture:data[0].picture});
            }
-              },
-              error: function(err){
-     }});
+           that.setState({displayname:displayname});
+          },
+        error: function(err){
+          alert(err);
+        }
+      });
   }
   changePicture(picture) {
       this.setState({
@@ -365,9 +370,9 @@ render(){
   return(
 
 <div className="row ">
-  <ToastContainer ref='asd'
-    toastMessageFactory={ToastMessageFactory}
-    className='toast-top-center'/>
+<ToastContainer ref="asd"
+  toastMessageFactory={ToastMessageFactory}
+  className='toast-top-center'/>
  <div className="col-xs-6 col-md-12">
     <header className="header-tp">
        <nav className="navbar navbar-default navbar-static-top">
@@ -488,7 +493,7 @@ render(){
              <div className="modal-footer">
                 <div className="row">
                    <div className="col-md-6">
-                      <p className="ta-l">Dont have an account ? </p>
+                      <p className="ta-l">Do not have an account ? </p>
                    </div>
                    <div className="col-md-4 col-md-offset-2">
                       <button className="btn-gst"  data-toggle="modal"  data-dismiss="modal" data-target="#at-signup" >Sign Up </button>
