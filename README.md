@@ -7,9 +7,13 @@
 **Functionalities**
   
   User can post the question
+  
   User can find the answers based on their search
+  
   User can post the answer for a particular question
+  
   User can follow/unfollow the question
+  
   User can like/dislike the answers
 
 **How to start running**
