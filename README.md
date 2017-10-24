@@ -1,7 +1,8 @@
 **Quest**
+
 **The Pursuit of Knowledge**
 
-Quest is a MERN based webapp where you can find the best answers in all topics from experts,friends and communities.
+  Quest is a MERN based webapp where you can find the best answers in all topics from experts,friends and communities.
 
 **Functionalities**
   User can post the question
