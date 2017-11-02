@@ -1,12 +1,12 @@
 {
-  "name": "mern-boilerplate",
+  "name": "Quest",
   "version": "1.0.0",
   "description": "",
   "scripts": {
     "start": "node server/bin/www.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Ramvignesh Pasupathy",
+  "author": "Nivethitha Ravichandran Ramani",
   "license": "ISC",
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
