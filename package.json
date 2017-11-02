@@ -1,7 +1,7 @@
 {
   "name": "Quest",
   "version": "1.0.0",
-  "description": "",
+  "description": "Quest is a MERN based webapp where you can find the best answers in all topics from experts,friends and communities.",
   "scripts": {
     "start": "node server/bin/www.js",
     "test": "echo \"Error: no test specified\" && exit 1"
